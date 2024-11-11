@@ -124,6 +124,7 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str):
     framework = prompt_frameworks[framework_identifier]
     output_structures = get_all_output_structure_combinations()
 
+    # TODO add case for "first_unstructred_output" 
     wrapped_prompts: list[PromptWrapper] = []
     for output_structure in output_structures:
         local_output_component_type_values = output_component_type_values.copy()
