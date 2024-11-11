@@ -73,19 +73,23 @@ def get_all_output_structure_combinations():
     for add_framework_explanation in [True, False]:
         for add_decision_reason in [True, False]:
             for first_unstructred_output in [True, False]:
-                sorted_output_comonents = []
-                # TODO permutation of those two?
-                if add_framework_explanation:
-                    sorted_output_comonents.append(
-                        OutputComponentType.FRAMEWORK_EXPLANATION)
-                if add_decision_reason:
-                    sorted_output_comonents.append(
-                        OutputComponentType.DECISION_REASON)
-                sorted_output_comonents.append(OutputComponentType.DECISION)
-                yield OutputStructure(
-                    sorted_output_comonents=sorted_output_comonents,
-                    first_unstructred_output=first_unstructred_output
-                )
+                # TODO Dont allow undecided?
+                for permuted_decision_options in itertools.permutations(ALL_DECISION_OPTIONS):
+                    sorted_output_components = []
+                    # TODO permutation of those two?
+                    if add_framework_explanation:
+                        sorted_output_components.append(
+                            OutputComponentType.FRAMEWORK_EXPLANATION)
+                    if add_decision_reason:
+                        sorted_output_components.append(
+                            OutputComponentType.DECISION_REASON)
+                    sorted_output_components.append(
+                        OutputComponentType.DECISION)
+                    yield OutputStructure(
+                        sorted_output_components=sorted_output_components,
+                        sorted_decision_options=permuted_decision_options,
+                        first_unstructred_output=first_unstructred_output
+                    )
 
 
 def get_output_structure_description(ordered_output: list[OutputComponentType]):
@@ -122,34 +126,34 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str):
 
     wrapped_prompts: list[PromptWrapper] = []
     for output_structure in output_structures:
-        for reordered_decision_otpions in itertools.permutations(ALL_DECISION_OPTIONS):
-            local_output_component_type_values = output_component_type_values.copy()
-            local_output_component_type_values[OutputComponentType.DECISION]['type'] = [
-                option_str[option] for option in reordered_decision_otpions]
+        local_output_component_type_values = output_component_type_values.copy()
+        local_output_component_type_values[OutputComponentType.DECISION]['type'] = [
+            option_str[option] for option in output_structure.sorted_decision_options]
+        output_schema_json_schema = json.dumps({
+            output_component_type_value['json_key']: output_component_type_value['type']
+            for output_component_type_value in local_output_component_type_values.values()
+        }, indent=4)
 
-            output_schema_json_schema = json.dumps({
-                output_component_type_value['json_key']: output_component_type_value['type']
-                for output_component_type_value in local_output_component_type_values.values()
-            }, indent=4)
-            output_structure_description = get_output_structure_description(
-                output_structure.sorted_output_comonents)
-            prompt = base_prompt.format(
-                dilemma_description=dillemma['description'],
-                framework_description=framework['description'],
-                output_schema_json_schema=output_schema_json_schema,
-                output_schema_description=output_structure_description
-            )
-            wrapped_prompts.append(PromptWrapper(
-                prompts=[prompt],
-                dilemma_identifier=dilemma_identifier,
-                framework_identifier=framework_identifier,
-                ordered_output=output_structure,
-                version=VERSION
-            ))
+        output_structure_description = get_output_structure_description(
+            output_structure.sorted_output_components)
+        prompt = base_prompt.format(
+            dilemma_description=dillemma['description'],
+            framework_description=framework['description'],
+            output_schema_json_schema=output_schema_json_schema,
+            output_schema_description=output_structure_description
+        )
+        wrapped_prompts.append(PromptWrapper(
+            prompts=[prompt],
+            dilemma_identifier=dilemma_identifier,
+            framework_identifier=framework_identifier,
+            ordered_output=output_structure,
+            version=VERSION
+        ))
 
     return wrapped_prompts
 
 
 if __name__ == '__main__':
-    for prompt in construct_prompts('trolley_problem', 'utilitarianism'):
+    test_prompts = construct_prompts('trolley_problem', 'utilitarianism')
+    for prompt in test_prompts:
         print(prompt.prompts[0])

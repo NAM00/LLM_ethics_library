@@ -19,12 +19,13 @@ class OutputComponentType(Enum):
 
 
 class OutputStructure:
-    sorted_output_comonents: list[OutputComponentType]
+    sorted_output_components: list[OutputComponentType]
     sorted_decision_options: list[DecisionOption]
     first_unstructred_output: bool
 
-    def __init__(self, sorted_output_comonents: list[OutputComponentType], first_unstructred_output: bool):
-        self.sorted_output_comonents = sorted_output_comonents
+    def __init__(self, sorted_output_components: list[OutputComponentType], sorted_decision_options: list[DecisionOption], first_unstructred_output: bool):
+        self.sorted_output_components = sorted_output_components
+        self.sorted_decision_options = sorted_decision_options
         self.first_unstructred_output = first_unstructred_output
 
 
