@@ -127,6 +127,8 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str):
     # TODO add case for "first_unstructred_output" 
     wrapped_prompts: list[PromptWrapper] = []
     for output_structure in output_structures:
+        # First create a local isntance of output_component_type_values,
+        # to make sure the ppermutation of the "decision" output options is correct
         local_output_component_type_values = output_component_type_values.copy()
         local_output_component_type_values[OutputComponentType.DECISION]['type'] = [
             option_str[option] for option in output_structure.sorted_decision_options]
