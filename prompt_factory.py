@@ -147,7 +147,7 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str):
             prompts=[prompt],
             dilemma_identifier=dilemma_identifier,
             framework_identifier=framework_identifier,
-            ordered_output=output_structure,
+            output_structure=output_structure,
             version=VERSION
         ))
 

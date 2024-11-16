@@ -35,13 +35,13 @@ class PromptWrapper:
         prompts: list[str],
         dilemma_identifier: str,
         framework_identifier: str,
-        ordered_output: OutputStructure,
+        output_structure: OutputStructure,
         version: str,
     ):
         self.prompts = prompts
         self.dilemma_identifier = dilemma_identifier
         self.framework_identifier = framework_identifier
-        self.output_type = ordered_output
+        self.output_structure = output_structure
         self.version = version
 
 
