@@ -44,6 +44,13 @@ class PromptWrapper:
         self.output_structure = output_structure
         self.version = version
 
+    def __str__(self):
+        str = "--------PromptWrapper--------"
+        for prompt in self.prompts:
+            str += f"\nprompt:\n{prompt}"
+        str += "-----------------------------"
+        return str
+
 
 class Response:
     def __init__(self, prompt: PromptWrapper, decision: DecisionOption):
