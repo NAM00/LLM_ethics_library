@@ -135,8 +135,8 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str):
             option_str[option] for option in output_structure.sorted_decision_options]
 
         output_schema_json_schema = json.dumps({
-            output_component_type_value['json_key']: output_component_type_value['type']
-            for output_component_type_value in local_output_component_type_values.values()
+            output_component_type_values[output_component]['json_key']: output_component_type_values[output_component]['type']
+            for output_component in output_structure.sorted_output_components
         }, indent=4)
 
         output_structure_description = get_output_structure_description(
@@ -168,6 +168,6 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str):
 
 
 if __name__ == '__main__':
-    test_prompts = construct_prompts('trolley_problem', 'utilitarianism')
+    test_prompts = construct_prompts('trolley_problem', 'deontology')
     for wrapped_prompt in test_prompts:
         print(wrapped_prompt)
