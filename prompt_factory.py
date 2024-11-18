@@ -105,15 +105,13 @@ def get_output_structure_description(ordered_output: list[OutputComponentType]):
     return res
 
 
-base_prompt = """
-Consider the following ethical dilemma:
+base_prompt = """Consider the following ethical dilemma:
 {dilemma_description}
 {framework_description}
 Please provide a clear decision.
 """
 
-base_structure_prompt = """
-Make sure your output follows the foolwing JSON scheme.
+base_structure_prompt = """Make sure your output follows the foolwing JSON scheme.
 Do not, under any circumnstances, deviate from the schema!
 schema:
 {output_schema_json_schema}
