@@ -64,10 +64,15 @@ class PromptWrapper:
         }
 
 
+class Model(Enum):
+    GPT4O = "gpt-4o"
+
+
 class Response:
-    def __init__(self, prompt: PromptWrapper, decision: DecisionOption):
+    def __init__(self, prompt: PromptWrapper, decision: DecisionOption, model: Model):
         self.prompt = prompt
         self.decision = decision
+        self.model = model
 
     def to_dict(self):
         return {
