@@ -165,7 +165,24 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str):
     return wrapped_prompts
 
 
+def get_all_possible_prompts():
+    prompts = []
+    for dilemma_identifier in dillemas:
+        for framework_identifier in prompt_frameworks:
+            prompts += construct_prompts(dilemma_identifier, framework_identifier)
+    return prompts
+
+
+def generate_prompt_json(path="./wrapped_prompts.json"):
+    prompts = get_all_possible_prompts()
+    with open(path, 'w') as f:
+        json.dump(prompts, f, indent=4)
+
+    print("Prompts successfully written to 'wrapped_prompts.json'")
+
+
 if __name__ == '__main__':
-    test_prompts = construct_prompts('trolley_problem', 'deontology')
-    for wrapped_prompt in test_prompts:
+    prompts = get_all_possible_prompts()
+    for wrapped_prompt in prompts:
         print(wrapped_prompt)
+    print(len(prompts))
