@@ -73,23 +73,23 @@ def get_all_output_structure_combinations():
     for add_framework_explanation in [True, False]:
         for add_decision_reason in [True, False]:
             for first_unstructred_output in [True, False]:
-                # TODO Dont allow undecided?
                 for permuted_decision_options in itertools.permutations(ALL_DECISION_OPTIONS):
                     sorted_output_components = []
-                    # TODO permutation of those two?
                     if add_framework_explanation:
                         sorted_output_components.append(
                             OutputComponentType.FRAMEWORK_EXPLANATION)
                     if add_decision_reason:
                         sorted_output_components.append(
                             OutputComponentType.DECISION_REASON)
-                    sorted_output_components.append(
-                        OutputComponentType.DECISION)
-                    yield OutputStructure(
-                        sorted_output_components=sorted_output_components,
-                        sorted_decision_options=permuted_decision_options,
-                        first_unstructred_output=first_unstructred_output
-                    )
+                    sorted_output_components.append(OutputComponentType.DECISION)
+
+                    for permuted_output_components in itertools.permutations(sorted_output_components):
+                        yield OutputStructure(
+                            sorted_output_components=list(
+                                permuted_output_components),
+                            sorted_decision_options=permuted_decision_options,
+                            first_unstructred_output=first_unstructred_output
+                        )
 
 
 def get_output_structure_description(ordered_output: list[OutputComponentType]):
