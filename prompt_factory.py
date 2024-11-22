@@ -101,7 +101,8 @@ def get_output_structure_description(ordered_output: list[OutputComponentType]):
         if i == 0:
             res += f"{output_component_type_values[content]['description']}"
         else:
-            res += f" and then {output_component_type_values[content]['description']}."
+            res += f" and then {
+                output_component_type_values[content]['description']}."
     return res
 
 
@@ -169,7 +170,8 @@ def get_all_possible_prompts():
     prompts = []
     for dilemma_identifier in dillemas:
         for framework_identifier in prompt_frameworks:
-            prompts += construct_prompts(dilemma_identifier, framework_identifier)
+            prompts += construct_prompts(dilemma_identifier,
+                                         framework_identifier)
     return prompts
 
 
