@@ -2,7 +2,7 @@ import itertools
 
 from prompt_wrapper import *
 
-VERSION = '0.1'
+VERSION = '1.0'
 
 option_str = {
     DecisionOption.YES: "Yes",
@@ -186,9 +186,9 @@ def get_all_possible_prompts():
 
 
 def generate_prompt_json(path="./wrapped_prompts.json"):
-    prompts = get_all_possible_prompts()
+    prompt_dicts = [prompt.to_dict() for prompt in get_all_possible_prompts()]
     with open(path, 'w') as f:
-        json.dump(prompts, f, indent=4)
+        json.dump(prompt_dicts, f, indent=4)
 
     print("Prompts successfully written to 'wrapped_prompts.json'")
 
