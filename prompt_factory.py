@@ -2,7 +2,7 @@ import itertools
 
 from library.prompt_wrapper import *
 
-VERSION = '1.1'
+VERSION = '1.2'
 
 option_str = {
     DecisionOption.YES: "Yes",
