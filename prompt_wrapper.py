@@ -31,6 +31,17 @@ class OutputStructure:
             "first_unstructred_output": self.first_unstructred_output,
         }
 
+    @classmethod
+    def from_dict(cls, data: dict):
+        """
+        Create an OutputStructure object from a dictionary.
+        """
+        return cls(
+            sorted_output_components=[OutputComponentType(component) for component in data["sorted_output_components"]],
+            sorted_decision_options=[DecisionOption(option) for option in data["sorted_decision_options"]],
+            first_unstructred_output=data["first_unstructred_output"],
+        )
+
 
 class PromptWrapper:
     def __init__(
@@ -62,6 +73,19 @@ class PromptWrapper:
             "output_structure": self.output_structure.to_dict(),
             "version": self.version,
         }
+    
+    @classmethod
+    def from_dict(cls, data: dict):
+        """
+        Create a PromptWrapper object from a dictionary.
+        """
+        return cls(
+            prompts=data["prompts"],
+            dilemma_identifier=data["dilemma_identifier"],
+            framework_identifier=data["framework_identifier"],
+            output_structure=OutputStructure.from_dict(data["output_structure"]),
+            version=data["version"],
+        )
 
 
 class Model(Enum):
