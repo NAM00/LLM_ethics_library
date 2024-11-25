@@ -116,7 +116,7 @@ def get_output_structure_description(ordered_output: list[OutputComponentType]):
             res += f"{output_component_type_values[content]['description']}"
         else:
             res += f" and then {
-                output_component_type_values[content]['description']}."
+                output_component_type_values[content]['description']}"
     return res
 
 
