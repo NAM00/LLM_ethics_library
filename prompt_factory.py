@@ -148,7 +148,7 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
     dillemma = dillemas[dilemma_identifier]
     framework = prompt_frameworks[framework_identifier]
     base_prompt = base_prompts[base_prompt_identifier]
-    
+
     output_structures = get_all_output_structure_combinations()
     for output_structure in output_structures:
         # First create a local instance of output_component_type_values,
@@ -196,7 +196,7 @@ def get_all_possible_prompts(selected_dillemas=dillemas.keys()):
         for dilemma_identifier in selected_dillemas:
             for framework_identifier in prompt_frameworks.keys():
                 generated_prompts += construct_prompts(dilemma_identifier,
-                                             framework_identifier, base_prompt_identifier)
+                                                       framework_identifier, base_prompt_identifier)
     return generated_prompts
 
 
