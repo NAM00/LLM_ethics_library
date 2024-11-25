@@ -2,7 +2,7 @@ import json
 from library.prompt_wrapper import PromptWrapper
 
 
-def generate_prompt_json(prompts, path="./wrapped_prompts.json"):
+def generate_prompt_json(prompts, path):
     prompt_dicts = [prompt.to_dict() for prompt in prompts]
     with open(path, 'w') as f:
         json.dump(prompt_dicts, f, indent=4)
