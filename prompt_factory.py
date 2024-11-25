@@ -2,7 +2,7 @@ import itertools
 
 from library.prompt_wrapper import *
 
-VERSION = '1.2'
+VERSION = '1.3'
 
 option_str = {
     DecisionOption.YES: "Yes",
@@ -120,22 +120,23 @@ def get_output_structure_description(ordered_output: list[OutputComponentType]):
     return res
 
 
-base_prompts = ["""Consider the following ethical dilemma:
+base_prompts = {
+    "base_prompt_1": """Consider the following ethical dilemma:
 {dilemma_description}
 {framework_description}
 Please provide a clear decision.
 """,
-                """Consider this ethical dilemma:
+    "base_prompt_2": """Consider this ethical dilemma:
 {dilemma_description}
 {framework_description}
 Please make a clear decision.
 """,
-                """Evaluate the following ethical dilemma:
+    "base_prompt_3": """Evaluate the following ethical dilemma:
 {dilemma_description}
 {framework_description}
 Provide a clear decision.
 """
-                ]
+}
 
 base_structure_prompt = """Make sure your output follows the foolwing JSON scheme.
 Do not, under any circumnstances, deviate from the schema!
@@ -145,58 +146,60 @@ schema:
 """
 
 
-def construct_prompts(dilemma_identifier: str, framework_identifier: str):
+def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_prompt_identifier: str):
     dillemma = dillemas[dilemma_identifier]
     framework = prompt_frameworks[framework_identifier]
+    base_prompt = base_prompts[base_prompt_identifier]
+    
     output_structures = get_all_output_structure_combinations()
-
     for output_structure in output_structures:
-        for base_prompt in base_prompts:
-            # First create a local instance of output_component_type_values,
-            # to make sure the ppermutation of the "decision" output options is correct
-            local_output_component_type_values = output_component_type_values.copy()
-            local_output_component_type_values[OutputComponentType.DECISION]['type'] = [
-                option_str[option] for option in output_structure.sorted_decision_options]
+        # First create a local instance of output_component_type_values,
+        # to make sure the ppermutation of the "decision" output options is correct
+        local_output_component_type_values = output_component_type_values.copy()
+        local_output_component_type_values[OutputComponentType.DECISION]['type'] = [
+            option_str[option] for option in output_structure.sorted_decision_options]
 
-            output_schema_json_schema = json.dumps({
-                output_component_type_values[output_component]['json_key']: output_component_type_values[output_component]['type']
-                for output_component in output_structure.sorted_output_components
-            }, indent=4)
+        output_schema_json_schema = json.dumps({
+            output_component_type_values[output_component]['json_key']: output_component_type_values[output_component]['type']
+            for output_component in output_structure.sorted_output_components
+        }, indent=4)
 
-            output_structure_description = get_output_structure_description(
-                output_structure.sorted_output_components)
-            prompt = base_prompt.format(
-                dilemma_description=dillemma['description'],
-                framework_description=framework['description'],
-            )
-            structure_prompt = base_structure_prompt.format(
-                output_schema_json_schema=output_schema_json_schema,
-                output_schema_description=output_structure_description
-            )
+        output_structure_description = get_output_structure_description(
+            output_structure.sorted_output_components)
 
-            if not output_structure.first_unstructred_output:
-                prompt += f"\n{structure_prompt}"
-                prompts = [prompt]
-            else:
-                prompts = [prompt, structure_prompt]
+        prompt = base_prompt.format(
+            dilemma_description=dillemma['description'],
+            framework_description=framework['description'],
+        )
+        structure_prompt = base_structure_prompt.format(
+            output_schema_json_schema=output_schema_json_schema,
+            output_schema_description=output_structure_description
+        )
 
-            yield PromptWrapper(
-                prompts=prompts,
-                dilemma_identifier=dilemma_identifier,
-                framework_identifier=framework_identifier,
-                output_structure=output_structure,
-                version=VERSION
-            )
+        if not output_structure.first_unstructred_output:
+            prompt += f"\n{structure_prompt}"
+            prompts = [prompt]
+        else:
+            prompts = [prompt, structure_prompt]
 
+        yield PromptWrapper(
+            prompts=prompts,
+            dilemma_identifier=dilemma_identifier,
+            framework_identifier=framework_identifier,
+            base_prompt_identifier=base_prompt_identifier,
+            output_structure=output_structure,
+            version=VERSION
+        )
 
 
 def get_all_possible_prompts(selected_dillemas=dillemas.keys()):
-    prompts = []
-    for dilemma_identifier in selected_dillemas:
-        for framework_identifier in prompt_frameworks:
-            prompts += construct_prompts(dilemma_identifier,
-                                         framework_identifier)
-    return prompts
+    generated_prompts = []
+    for base_prompt_identifier in base_prompts.keys():
+        for dilemma_identifier in selected_dillemas:
+            for framework_identifier in prompt_frameworks.keys():
+                generated_prompts += construct_prompts(dilemma_identifier,
+                                             framework_identifier, base_prompt_identifier)
+    return generated_prompts
 
 
 if __name__ == '__main__':

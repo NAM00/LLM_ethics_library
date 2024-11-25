@@ -49,12 +49,14 @@ class PromptWrapper:
         prompts: list[str],
         dilemma_identifier: str,
         framework_identifier: str,
+        base_prompt_identifier: str,
         output_structure: OutputStructure,
         version: str,
     ):
         self.prompts = prompts
         self.dilemma_identifier = dilemma_identifier
         self.framework_identifier = framework_identifier
+        self.base_prompt_identifier = base_prompt_identifier
         self.output_structure = output_structure
         self.version = version
 
@@ -70,6 +72,7 @@ class PromptWrapper:
             "prompts": self.prompts,
             "dilemma_identifier": self.dilemma_identifier,
             "framework_identifier": self.framework_identifier,
+            "base_prompt_identifier": self.base_prompt_identifier,
             "output_structure": self.output_structure.to_dict(),
             "version": self.version,
         }
@@ -83,6 +86,7 @@ class PromptWrapper:
             prompts=data["prompts"],
             dilemma_identifier=data["dilemma_identifier"],
             framework_identifier=data["framework_identifier"],
+            base_prompt_identifier=data["base_prompt_identifier"],
             output_structure=OutputStructure.from_dict(data["output_structure"]),
             version=data["version"],
         )
