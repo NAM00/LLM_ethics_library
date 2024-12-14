@@ -100,16 +100,16 @@ class Model(Enum):
 
 
 class Response:
-    def __init__(self, prompt: PromptWrapper, decision: DecisionOption, model: Model, responses: list[str]):
-        self.prompt = prompt
+    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, model: Model, messages: list[str]):
+        self.wrapped_prompt = wrapped_prompt
         self.decision = decision
         self.model = model
-        self.responses = responses
+        self.messages = messages
 
     def to_dict(self):
         return {
-            "prompt": self.prompt.to_dict(),
+            "wrapped_prompt": self.wrapped_prompt.to_dict(),
             "decision": self.decision.value,
             "model": self.model.value,
-            "responses": self.responses,
+            "messages": self.messages,
         }
