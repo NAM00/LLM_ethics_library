@@ -19,7 +19,6 @@ def test_openai_api(api_key: str):
     except Exception as e:
         return f"An error occurred: {e}"
 
-
 def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper) -> Response:
     openai.api_key = api_key
 
@@ -34,10 +33,23 @@ def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper) -> Response:
 
         messages.append({"role": "system", "content": prompt})
         try:
+            kwargs = {}
+            if not wrapped_prompt.output_structure.first_unstructred_output or count == 2:
+                response_format = { 
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "response",
+                        "strict": True,  
+                        "schema": wrapped_prompt.output_structure.get_json_schema()
+                    }
+                }
+                kwargs["response_format"] = response_format
+
+
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
-                max_tokens=100
+                **kwargs
             )
 
             if len(response.choices) == 0:

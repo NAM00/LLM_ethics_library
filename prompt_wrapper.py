@@ -1,5 +1,7 @@
+from typing import Dict, Type
+from pydantic import BaseModel, create_model
+
 from enum import Enum
-import json
 
 
 class DecisionOption(Enum):
@@ -18,11 +20,42 @@ class OutputComponentType(Enum):
     DECISION_REASON = "DECISION_REASON"
 
 
+def create_response_class(fields: Dict[str, Type]):
+    return create_model('DynamicResponse', **{score: (score_type, ...) for score, score_type in fields.items()})
+
+
 class OutputStructure:
     def __init__(self, sorted_output_components: list[OutputComponentType], sorted_decision_options: list[DecisionOption], first_unstructred_output: bool):
         self.sorted_output_components = sorted_output_components
         self.sorted_decision_options = sorted_decision_options
         self.first_unstructred_output = first_unstructred_output
+
+    def get_json_schema(self) -> object:
+        """
+        Get the OpenAI structured output schema for the current OutputStructure object.
+        """
+
+        sorted_output_components_schema = {}
+        for component in self.sorted_output_components:
+            if OutputComponentType(component) == OutputComponentType.DECISION:
+                decision_schema = {
+                    "type": "string",
+                    "description": "The decision options",
+                    "enum": [item.value for item in self.sorted_decision_options]
+                }
+                sorted_output_components_schema[component.value.lower()] = decision_schema
+            else:
+                sorted_output_components_schema[component.value.lower()] = {
+                    "type": "string",
+                    "description": f"The {component.value.lower()} content"
+                }
+        json_schema = {
+            "type": "object",
+            "properties": sorted_output_components_schema,
+            "additionalProperties": False,
+            "required": [component.value for component in self.sorted_output_components],
+        }
+        return json_schema
 
     def to_dict(self):
         return {
