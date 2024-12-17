@@ -36,19 +36,22 @@ class OutputStructure:
         """
 
         sorted_output_components_schema = {}
-        for component in self.sorted_output_components:
-            if component == OutputComponentType.DECISION:
-                decision_schema = {
+        for output_component in self.sorted_output_components:
+            if output_component == OutputComponentType.DECISION:
+                output_component_schema = {
                     "type": "string",
                     "description": "The decision options",
                     "enum": [item.value for item in self.sorted_decision_options]
                 }
-                sorted_output_components_schema[component.value.lower()] = decision_schema
+
             else:
-                sorted_output_components_schema[component.value.lower()] = {
+                output_component_schema = {
                     "type": "string",
-                    "description": f"The {component.value.lower()} content"
+                    "description": f"The {output_component.value.lower()} content"
                 }
+            sorted_output_components_schema[output_component.value.lower(
+            )] = output_component_schema
+
         json_schema = {
             "type": "object",
             "properties": sorted_output_components_schema,
