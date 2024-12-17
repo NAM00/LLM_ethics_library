@@ -24,15 +24,16 @@ def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper) -> Response:
 
     messages = []
     responses = []
-    safeguard = 5 # We never have more than 5 prompts
-    count = 0
-    for prompt in wrapped_prompt.prompts:
-        if count >= safeguard:
-            break
-        count += 1
 
-        messages.append({"role": "system", "content": prompt})
-        try:
+    try:
+        safeguard = 5 # We never have more than 5 prompts
+        count = 0
+        for prompt in wrapped_prompt.prompts:
+            if count >= safeguard:
+                raise Exception("Too many prompts")
+            count += 1
+    
+            messages.append({"role": "system", "content": prompt})
             kwargs = {}
             if not wrapped_prompt.output_structure.first_unstructred_output or count == 2:
                 response_format = { 
@@ -49,18 +50,28 @@ def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper) -> Response:
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
+                n=1,
                 **kwargs
             )
 
             if len(response.choices) == 0:
                 raise Exception("No response from OpenAI API")
+            if len(response.choices) > 1:
+                raise Exception("More than one response from OpenAI API")
+            if response.choices[0].message.role != "assistant":
+                raise Exception("Response from OpenAI API is not from the assistant")
+            if response.choices[0].message.content == "":
+                raise Exception("Response from OpenAI API is empty")
+            if response.choices[0].finish_reason != "stop":
+                raise Exception("Response finish_reason is not 'stop'")
+
             response_str = response.choices[0].message.content
             messages.append(
                 {"role": "assistant", "content": response_str})
             responses.append(response_str)
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            raise e
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        raise e
 
     return responses
 
