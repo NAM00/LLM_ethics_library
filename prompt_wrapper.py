@@ -37,7 +37,7 @@ class OutputStructure:
 
         sorted_output_components_schema = {}
         for component in self.sorted_output_components:
-            if OutputComponentType(component) == OutputComponentType.DECISION:
+            if component == OutputComponentType.DECISION:
                 decision_schema = {
                     "type": "string",
                     "description": "The decision options",
@@ -53,7 +53,7 @@ class OutputStructure:
             "type": "object",
             "properties": sorted_output_components_schema,
             "additionalProperties": False,
-            "required": [component.value for component in self.sorted_output_components],
+            "required": [component.value.lower() for component in self.sorted_output_components],
         }
         return json_schema
 
