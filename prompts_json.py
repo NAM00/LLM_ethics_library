@@ -18,5 +18,9 @@ def load_prompts_from_json(path: str):
     with open(path, 'r') as f:
         data = json.load(f)
 
+    res = [PromptWrapper.from_dict(item) for item in data]
+    if not res[0].version == VERSION:
+        raise ValueError("The version of the loaded prompts does not match the current library version.")
+
     # Convert each dictionary back into a PromptWrapper object
-    return [PromptWrapper.from_dict(item) for item in data]
+    return res
