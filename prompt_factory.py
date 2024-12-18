@@ -1,13 +1,13 @@
 import itertools
+import json
 
 from library.prompt_wrapper import *
-
-VERSION = '1.3'
+from library.version import VERSION
 
 option_str = {
-    DecisionOption.YES: "Yes",
-    DecisionOption.NO: "No",
-    DecisionOption.UNDECIDED: "Undecided"
+    DecisionOption.YES: DecisionOption.YES.value,
+    DecisionOption.NO: DecisionOption.NO.value,
+    DecisionOption.UNDECIDED: DecisionOption.UNDECIDED.value
 }
 
 ethical_normative_frameworks = {

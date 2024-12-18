@@ -1,6 +1,7 @@
 import json
-from library.prompt_wrapper import PromptWrapper
 
+from library.prompt_wrapper import PromptWrapper
+from library.version import VERSION
 
 def generate_prompt_json(prompts: list[PromptWrapper], path: str):
     prompt_dicts = [prompt.to_dict() for prompt in prompts]
