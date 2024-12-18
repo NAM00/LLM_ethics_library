@@ -136,16 +136,28 @@ class Model(Enum):
 
 
 class Response:
-    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, model: Model, messages: list[str]):
+    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: Model, unparsed_messages: list[str], parsed_response: dict):
         self.wrapped_prompt = wrapped_prompt
         self.decision = decision
-        self.model = model
-        self.messages = messages
+        self.llm_identifier = llm_identifier
+        self.unparsed_messages = unparsed_messages
+        self.parsed_response = parsed_response
 
     def to_dict(self):
         return {
             "wrapped_prompt": self.wrapped_prompt.to_dict(),
             "decision": self.decision.value,
-            "model": self.model.value,
-            "messages": self.messages,
+            "llm_identifier": self.llm_identifier.value,
+            "unparsed_messages": self.unparsed_messages,
+            "parsed_response": self.parsed_response,
         }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            wrapped_prompt=PromptWrapper.from_dict(data["wrapped_prompt"]),
+            decision=DecisionOption(data["decision"]),
+            llm_identifier=Model(data["llm_identifier"]),
+            unparsed_messages=data["unparsed_messages"],
+            parsed_response=data["parsed_response"],
+        )
