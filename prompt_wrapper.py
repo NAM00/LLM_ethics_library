@@ -82,6 +82,9 @@ class OutputStructure:
 
 
 class PromptWrapper:
+    def add_id(self, id: int):
+        self.id = id
+
     def __init__(
         self,
         prompts: list[str],
@@ -91,6 +94,7 @@ class PromptWrapper:
         output_structure: OutputStructure,
         version: str,
     ):
+        self.id = None
         self.prompts = prompts
         self.dilemma_identifier = dilemma_identifier
         self.framework_identifier = framework_identifier
@@ -106,7 +110,10 @@ class PromptWrapper:
         return str
 
     def to_dict(self):
+        if self.id is None:
+            raise Exception("PromptWrapper ID is None")
         return {
+            "id": self.id,
             "prompts": self.prompts,
             "dilemma_identifier": self.dilemma_identifier,
             "framework_identifier": self.framework_identifier,
@@ -120,7 +127,7 @@ class PromptWrapper:
         """
         Create a PromptWrapper object from a dictionary.
         """
-        return cls(
+        res = cls(
             prompts=data["prompts"],
             dilemma_identifier=data["dilemma_identifier"],
             framework_identifier=data["framework_identifier"],
@@ -129,6 +136,9 @@ class PromptWrapper:
                 data["output_structure"]),
             version=data["version"],
         )
+
+        res.add_id(data["id"])
+        return res
 
 
 class Model(Enum):

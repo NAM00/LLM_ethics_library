@@ -190,6 +190,12 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
         )
 
 
+def add_id_to_prompts(prompts: list[PromptWrapper]):
+    for i, prompt in enumerate(prompts):
+        prompt.add_id(i)
+    return prompts
+
+
 def get_all_possible_prompts(selected_dillemas=dillemas.keys()):
     generated_prompts = []
     for base_prompt_identifier in base_prompts.keys():
@@ -197,6 +203,7 @@ def get_all_possible_prompts(selected_dillemas=dillemas.keys()):
             for framework_identifier in prompt_frameworks.keys():
                 generated_prompts += construct_prompts(dilemma_identifier,
                                                        framework_identifier, base_prompt_identifier)
+    generated_prompts = add_id_to_prompts(generated_prompts)
     return generated_prompts
 
 
