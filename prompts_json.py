@@ -28,18 +28,16 @@ def load_prompts_from_json(path: str):
     return res
 
 
-def generate_response_json(responses: list[Response], path: str):
+def generate_response_json(responses: list[Response], path: str, logging: bool = True):
     response_dicts = [response.to_dict() for response in responses]
     with open(path, 'w') as f:
         json.dump(response_dicts, f, indent=4)
 
-    print(f"Responses successfully written to {path}")
+    if logging:
+        print(f"Responses successfully written to {path}")
 
 
 def load_responses_from_json(path: str):
-    """
-    Load a list of Response objects from a JSON file.
-    """
     with open(path, 'r') as f:
         data = json.load(f)
 
