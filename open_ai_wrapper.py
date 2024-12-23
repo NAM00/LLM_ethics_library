@@ -82,7 +82,7 @@ def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: Model =
             wrapped_prompt=wrapped_prompt,
             decision=decision,
             llm_identifier=model,
-            unparsed_messages=messages,
+            unparsed_messages=[GPTMessage.from_dict(item) for item in messages],
             parsed_response=parsed_response,
         )
     except Exception as e:

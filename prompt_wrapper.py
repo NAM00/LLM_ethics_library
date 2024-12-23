@@ -145,8 +145,32 @@ class Model(Enum):
     GPT4O = "gpt-4o"
 
 
+class GPTMessageRole(Enum):
+    SYSTEM = "system"
+    ASSISSANT = "assistant"
+
+
+class GPTMessage:
+    def __init__(self, role: GPTMessageRole, content: str):
+        self.role = role
+        self.content = content
+
+    def to_dict(self):
+        return {
+            "role": self.role.value,
+            "content": self.content,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            role=GPTMessageRole(data["role"]),
+            content=data["content"],
+        )
+
+
 class Response:
-    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: Model, unparsed_messages: list[str], parsed_response: dict):
+    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: Model, unparsed_messages: list[GPTMessage], parsed_response: dict):
         self.wrapped_prompt = wrapped_prompt
         self.decision = decision
         self.llm_identifier = llm_identifier
@@ -158,7 +182,7 @@ class Response:
             "wrapped_prompt": self.wrapped_prompt.to_dict(),
             "decision": self.decision.value,
             "llm_identifier": self.llm_identifier.value,
-            "unparsed_messages": self.unparsed_messages,
+            "unparsed_messages": [message.to_dict() for message in self.unparsed_messages],
             "parsed_response": self.parsed_response,
         }
 
@@ -168,6 +192,25 @@ class Response:
             wrapped_prompt=PromptWrapper.from_dict(data["wrapped_prompt"]),
             decision=DecisionOption(data["decision"]),
             llm_identifier=Model(data["llm_identifier"]),
-            unparsed_messages=data["unparsed_messages"],
+            unparsed_messages=[GPTMessage.from_dict(item) for item in data["unparsed_messages"]],
             parsed_response=data["parsed_response"],
         )
+
+    def get_messages_by_role(self, role: GPTMessageRole) -> list[GPTMessage]:
+        return [message for message in self.unparsed_messages if message.role == role]
+
+    @property
+    def input_tokens_len(self) -> int:
+        sum = 0
+        for i in range(0, len(self.unparsed_messages) - 1):
+            for j in range(0, i + 1):
+                sum += len(self.unparsed_messages[j].content)
+        return sum
+    
+    @property
+    def output_tokens_len(self) -> int:
+        sum = 0
+        assistant_messages = self.get_messages_by_role(GPTMessageRole.ASSISSANT)
+        for message in assistant_messages:
+            sum += len(message.content)
+        return sum
