@@ -5,7 +5,7 @@ Functions:
 - Generating many variations of prompts 
   - to make sure irrelevant factors like "output option ordering" or "dilemma formulation" have no siginficant impact on the results 
 - prompting of LLMs (currently only OpenAI ChatGPT)
-- providing wrapper classes for Prompts and Responses to make working with them easier
+- provides wrapper classes for Prompts and Responses to make working with them easier
 
 
 # Results
