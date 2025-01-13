@@ -7,7 +7,7 @@ Functions:
 - Prompting of LLMs (currently only OpenAI ChatGPT)
   - utilizes [structured output](https://platform.openai.com/docs/guides/structured-outputs) to ensure correct response format
 - Provides wrapper classes for Prompts and Responses to make working with them easier
-
+  - Importing and Exporting from/to JSON is supported
 
 # Results
 ## Results of v1.4 (still work in progress!)
