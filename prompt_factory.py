@@ -50,14 +50,16 @@ Would you pull the lever to save five people and sacrifice one, or not?
 A community hides from armed invaders. 
 A crying child endangers their secrecy. 
 Should the child be silenced, even at the cost of its life, to ensure the group's survival?
-        '''
+        ''',
+        'yes_means_kill': True
     },
     "crying_baby_2": {
         'description': '''
 A community hides from armed invaders. 
 A crying child endangers their secrecy. 
 Should the group choose to spare the child, even if it endangers their secrecy and survival?
-        '''
+        ''',
+        'yes_means_kill': False
     }
 }
 
