@@ -20,10 +20,6 @@ class OutputComponentType(Enum):
     DECISION_REASON = "DECISION_REASON"
 
 
-def create_response_class(fields: Dict[str, Type]):
-    return create_model('DynamicResponse', **{score: (score_type, ...) for score, score_type in fields.items()})
-
-
 class OutputStructure:
     def __init__(self, sorted_output_components: list[OutputComponentType], sorted_decision_options: list[DecisionOption], first_unstructred_output: bool):
         self.sorted_output_components = sorted_output_components
