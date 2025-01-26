@@ -135,7 +135,12 @@ class PromptWrapper:
             version=data["version"],
         )
 
-        res.add_id(data["_id"])
+        # TODO remove this. version1.5 called id "id" and now it is called "_id"
+        _id = data.get("_id")
+        if not _id:
+            _id = data.get("id")
+        res.add_id(_id)
+
         return res
 
 
