@@ -87,8 +87,8 @@ class OutputStructure:
 
 
 class PromptWrapper:
-    def add_id(self, id: int):
-        self.id = id
+    def add_id(self, _id: int):
+        self._id = _id
 
     def __init__(
         self,
@@ -99,7 +99,7 @@ class PromptWrapper:
         output_structure: OutputStructure,
         version: str,
     ):
-        self.id = None
+        self._id = None
         self.prompts = prompts
         self.dilemma_identifier = dilemma_identifier
         self.framework_identifier = framework_identifier
@@ -115,10 +115,10 @@ class PromptWrapper:
         return str
 
     def to_dict(self):
-        if self.id is None:
+        if self._id is None:
             raise Exception("PromptWrapper ID is None")
         return {
-            "id": self.id,
+            "_id": self._id,
             "prompts": self.prompts,
             "dilemma_identifier": self.dilemma_identifier,
             "framework_identifier": self.framework_identifier,
@@ -142,7 +142,7 @@ class PromptWrapper:
             version=data["version"],
         )
 
-        res.add_id(data["id"])
+        res.add_id(data["_id"])
         return res
 
 
