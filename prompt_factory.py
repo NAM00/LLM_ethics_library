@@ -1,8 +1,8 @@
 import itertools
 import json
 
-from library.prompt_wrapper import *
-from library.version import VERSION
+from .prompt_wrapper import *
+from .version import VERSION
 
 option_str = {
     DecisionOption.YES: DecisionOption.YES.value,

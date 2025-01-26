@@ -3,7 +3,7 @@ import json
 import os
 import openai
 
-from library.prompt_wrapper import *
+from .prompt_wrapper import *
 
 
 def test_openai_api(api_key: str):
