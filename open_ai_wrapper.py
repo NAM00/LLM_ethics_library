@@ -38,6 +38,7 @@ def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: Model =
 
             messages.append({"role": "system", "content": prompt})
             kwargs = {}
+            # We add the the response_format either directly or in the second prompt where its asked to parse its ouput.
             if not wrapped_prompt.output_structure.first_unstructred_output or count == 2:
                 response_format = {
                     "type": "json_schema",
