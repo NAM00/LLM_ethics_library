@@ -1,6 +1,3 @@
-from typing import Dict, Type
-from pydantic import BaseModel, create_model
-
 from enum import Enum
 
 
@@ -104,11 +101,11 @@ class PromptWrapper:
         self.version = version
 
     def __str__(self):
-        str = "--------PromptWrapper--------"
+        res = "--------PromptWrapper--------"
         for prompt in self.prompts:
-            str += f"\nprompt:\n{prompt}"
-        str += "-----------------------------"
-        return str
+            res += f"\nprompt:\n{prompt}"
+        res += "-----------------------------"
+        return res
 
     def to_dict(self):
         if self._id is None:
@@ -202,16 +199,16 @@ class Response:
 
     @property
     def input_tokens_len(self) -> int:
-        sum = 0
+        res = 0
         for i in range(0, len(self.unparsed_messages) - 1):
             for j in range(0, i + 1):
-                sum += len(self.unparsed_messages[j].content)
-        return sum
+                res += len(self.unparsed_messages[j].content)
+        return res
 
     @property
     def output_tokens_len(self) -> int:
-        sum = 0
+        res = 0
         assistant_messages = self.get_messages_by_role(GPTMessageRole.ASSISSANT)
         for message in assistant_messages:
-            sum += len(message.content)
-        return sum
+            res += len(message.content)
+        return res
