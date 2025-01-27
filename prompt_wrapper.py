@@ -30,6 +30,10 @@ class OutputStructure:
         self.sorted_decision_options = sorted_decision_options
         self.first_unstructred_output = first_unstructred_output
 
+    @property
+    def unsorted_output_components(self) -> list[OutputComponentType]:
+        return [component for component in OutputComponentType if component in self.sorted_output_components]
+
     def get_json_schema(self) -> object:
         """
         Get the OpenAI structured output schema for the current OutputStructure object.
@@ -65,6 +69,7 @@ class OutputStructure:
             "sorted_output_components": [component.value for component in self.sorted_output_components],
             "sorted_decision_options": [option.value for option in self.sorted_decision_options],
             "first_unstructred_output": self.first_unstructred_output,
+            "unsorted_output_components": [component.value for component in self.unsorted_output_components],
         }
 
     @classmethod
@@ -206,7 +211,7 @@ class Response:
             for j in range(0, i + 1):
                 sum += len(self.unparsed_messages[j].content)
         return sum
-    
+
     @property
     def output_tokens_len(self) -> int:
         sum = 0

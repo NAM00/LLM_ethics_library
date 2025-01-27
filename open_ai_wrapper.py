@@ -17,9 +17,9 @@ def test_openai_api(api_key: str):
             max_tokens=5
         )
         print("WORKED")
-        return response
     except Exception as e:
-        return f"An error occurred: {e}"
+        print("An error occurred")
+        raise e
 
 
 def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: Model = Model.GPT4O) -> Response:
