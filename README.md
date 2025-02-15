@@ -11,7 +11,7 @@ Functions:
 
 # Results
 ## Results of v1.4 (still work in progress!)
-It seems like GPT-4o's behaviour aligns mostly with Deontology and Virtue Ethics when looking at the crying baby dillemma.
+It seems like GPT-4o's behaviour aligns mostly with Deontology and Virtue Ethics when looking at the crying baby dilemma.
 The graph below plots the decision to kill (YES) or spare (NO) the child in the following situation:
 `A community hides from armed invaders. A crying child endangers their secrecy. `
 ![image](https://github.com/user-attachments/assets/75e3246f-8163-43ba-8131-e55680eaaa4f)

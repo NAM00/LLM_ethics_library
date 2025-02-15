@@ -164,7 +164,7 @@ schema:
 
 
 def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_prompt_identifier: str):
-    dillemma = dilemmas[dilemma_identifier]
+    dilemma = dilemmas[dilemma_identifier]
     framework = prompt_frameworks[framework_identifier]
     base_prompt = base_prompts[base_prompt_identifier]
 
@@ -185,7 +185,7 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
             output_structure.sorted_output_components)
 
         prompt = base_prompt.format(
-            dilemma_description=dillemma['description'],
+            dilemma_description=dilemma['description'],
             framework_description=framework['description'],
         )
         structure_prompt = base_structure_prompt.format(
