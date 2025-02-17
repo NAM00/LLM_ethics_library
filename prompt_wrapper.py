@@ -80,7 +80,7 @@ class OutputStructure:
 
 
 class PromptWrapper:
-    def add_id(self, _id: int):
+    def add_id(self, _id: str):
         self._id = _id
 
     def __init__(

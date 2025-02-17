@@ -211,7 +211,7 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
 
 def add_id_to_prompts(prompts: list[PromptWrapper]):
     for i, prompt in enumerate(prompts):
-        prompt.add_id(i)
+        prompt.add_id(f'{VERSION}_{i}')
     return prompts
 
 
