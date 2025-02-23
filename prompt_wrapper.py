@@ -239,11 +239,15 @@ class Response:
         if not isinstance(self.wrapped_prompt.dilemma, InvertableDilemmaWrapper):
             return self.decision
 
+        assert self.decision in [option for option in DecisionOption], f"Invalid decision value: {self.decision}. \n Check if restarting the jupyter kernel helps"
         if self.decision == DecisionOption.UNDECIDED:
             return DecisionOption.UNDECIDED
 
         if self.wrapped_prompt.dilemma.answer_is_inverted:
-            return DecisionOption.NO if self.decision == DecisionOption.YES else DecisionOption.YES
+            if self.decision == DecisionOption.YES:
+                return DecisionOption.NO
+            elif self.decision == DecisionOption.NO:
+                return DecisionOption.YES
 
         return self.decision
 
