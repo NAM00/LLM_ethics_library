@@ -49,7 +49,7 @@ Should the group choose to spare the child, even if it endangers their secrecy a
 
 
 def get_dilemma(identifier: str) -> DilemmaWrapper:
-    for dilemma in dilemmas:
-        if dilemma.identifier == identifier:
-            return dilemma
-    raise ValueError(f"Unknown dilemma identifier: {identifier}")
+    res = next((dilemma for dilemma in dilemmas if dilemma.identifier == identifier), None)
+    if not res:
+        raise ValueError(f"Unknown dilemma identifier: {identifier}")
+    return res
