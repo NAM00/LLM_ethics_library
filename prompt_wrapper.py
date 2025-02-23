@@ -1,5 +1,7 @@
 from enum import Enum
 
+from .dilemma_wrapper import DilemmaWrapper, InvertableDilemmaWrapper, get_dilemma
+
 
 class DecisionOption(Enum):
     YES = "YES"
@@ -100,6 +102,10 @@ class PromptWrapper:
         self.output_structure = output_structure
         self.version = version
 
+    @property
+    def dilemma(self) -> DilemmaWrapper:
+        return get_dilemma(self.dilemma_identifier)
+
     def __str__(self):
         res = "--------PromptWrapper--------"
         for prompt in self.prompts:
@@ -199,21 +205,64 @@ class Response:
             parsed_response=data["parsed_response"],
         )
 
+    def to_analysis_dict(self):
+        """Extends the to_dict method to include additional fields that are useful for analysis"""
+
+        res = self.to_dict()
+        analysis_fields = {
+            "normalized_decision": self.normalized_decision.value,
+            "has_unstructured_decision_text": self.has_unstructured_decision_text,
+            "has_unstructured_decision_text_before_decision": self.has_unstructured_decision_text_before_decision,
+            "input_chars_len": self.input_chars_len,
+            "output_chars_len": self.output_chars_len,
+        }
+        res.update(analysis_fields)
+        return res
+
     def get_messages_by_role(self, role: GPTMessageRole) -> list[GPTMessage]:
         return [message for message in self.unparsed_messages if message.role == role]
 
     @property
-    def input_tokens_len(self) -> int:
-        res = 0
-        for i in range(0, len(self.unparsed_messages) - 1):
-            for j in range(0, i + 1):
-                res += len(self.unparsed_messages[j].content)
-        return res
+    def input_chars_len(self) -> int:
+        # TODO calculation is wrong
+        # inputs will be passed to the LLM multiple times
+        return sum(len(message.content) for message in self.unparsed_messages[:-1])
 
     @property
-    def output_tokens_len(self) -> int:
-        res = 0
-        assistant_messages = self.get_messages_by_role(GPTMessageRole.ASSISSANT)
-        for message in assistant_messages:
-            res += len(message.content)
-        return res
+    def output_chars_len(self) -> int:
+        return sum(len(message.content) for message in self.get_messages_by_role(GPTMessageRole.ASSISSANT))
+
+    @property
+    def normalized_decision(self) -> DecisionOption:
+        """InvertableDilemmaWrapper allows for the decision to be inverted. This property returns the normalized decision."""
+
+        if not isinstance(self.wrapped_prompt.dilemma, InvertableDilemmaWrapper):
+            return self.decision
+
+        if self.decision == DecisionOption.UNDECIDED:
+            return DecisionOption.UNDECIDED
+
+        if self.wrapped_prompt.dilemma.answer_is_inverted:
+            return DecisionOption.NO if self.decision == DecisionOption.YES else DecisionOption.YES
+
+        return self.decision
+
+    @property
+    def has_unstructured_decision_text(self) -> bool:
+        return (
+            OutputComponentType.DECISION_REASON in self.wrapped_prompt.output_structure.sorted_decision_options
+            or self.wrapped_prompt.output_structure.first_unstructred_output
+        )
+
+    @property
+    def has_unstructured_decision_text_before_decision(self) -> bool:
+        if self.wrapped_prompt.output_structure.first_unstructred_output:
+            return True
+
+        sorted_output_options = self.wrapped_prompt.output_structure.sorted_decision_options
+        if OutputComponentType.DECISION_REASON in sorted_output_options:
+            decision_reason_index = sorted_output_options.index(OutputComponentType.DECISION_REASON)
+            decision_index = sorted_output_options.index(OutputComponentType.DECISION)
+            return decision_reason_index < decision_index
+
+        return False
