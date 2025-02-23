@@ -9,10 +9,6 @@ class DecisionOption(Enum):
     UNDECIDED = "UNDECIDED"
 
 
-ALL_DECISION_OPTIONS = [DecisionOption.YES,
-                        DecisionOption.NO, DecisionOption.UNDECIDED]
-
-
 class OutputComponentType(Enum):
     DECISION = "DECISION"
     FRAMEWORK_EXPLANATION = "FRAMEWORK_EXPLANATION"
@@ -239,7 +235,8 @@ class Response:
         if not isinstance(self.wrapped_prompt.dilemma, InvertableDilemmaWrapper):
             return self.decision
 
-        assert self.decision in [option for option in DecisionOption], f"Invalid decision value: {self.decision}. \n Check if restarting the jupyter kernel helps"
+        assert self.decision in [
+            option for option in DecisionOption], f"Invalid decision value: {self.decision}. \n Check if restarting the jupyter kernel helps"
         if self.decision == DecisionOption.UNDECIDED:
             return DecisionOption.UNDECIDED
 
