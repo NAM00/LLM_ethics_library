@@ -7,7 +7,7 @@ class DilemmaWrapper():
 class InvertableDilemmaWrapper(DilemmaWrapper):
     def __init__(self, identifier, description, answer_is_inverted):
         super().__init__(identifier, description)
-        # If the answer is inverted. Is dependent on the context of the dilemma.
+        # Is dependent on the context of the dilemma.
         self.answer_is_inverted = answer_is_inverted
 
 
