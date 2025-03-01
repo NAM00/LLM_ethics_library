@@ -211,6 +211,9 @@ class Response:
             "has_unstructured_decision_text_before_decision": self.has_unstructured_decision_text_before_decision,
             "input_chars_len": self.input_chars_len,
             "output_chars_len": self.output_chars_len,
+            "decision_option_yes_index": self.get_decision_option_index(DecisionOption.YES),
+            "decision_option_no_index": self.get_decision_option_index(DecisionOption.NO),
+            "decision_option_undecided_index": self.get_decision_option_index(DecisionOption.UNDECIDED),
         }
         res.update(analysis_fields)
         return res
@@ -267,3 +270,6 @@ class Response:
             return decision_reason_index < decision_index
 
         return False
+
+    def get_decision_option_index(self, decision_option: DecisionOption) -> int:
+        return self.wrapped_prompt.output_structure.sorted_decision_options.index(decision_option)
