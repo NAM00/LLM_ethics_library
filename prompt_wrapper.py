@@ -201,6 +201,8 @@ class Response:
             llm_identifier=Model(data["llm_identifier"]),
             unparsed_messages=[GPTMessage.from_dict(item) for item in data["unparsed_messages"]],
             parsed_response=data["parsed_response"],
+            prompt_tokens=data["prompt_tokens"],
+            completion_tokens=data["completion_tokens"],
         )
 
     def to_analysis_dict(self):
