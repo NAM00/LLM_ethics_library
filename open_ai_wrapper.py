@@ -31,6 +31,8 @@ def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: Model =
     try:
         safeguard = 5  # We never have more than 5 prompts
         count = 0
+        prompt_tokens = 0
+        completion_tokens = 0
         for prompt in wrapped_prompt.prompts:
             if count >= safeguard:
                 raise Exception("Too many prompts")
@@ -72,6 +74,8 @@ def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: Model =
             messages.append(
                 {"role": "assistant", "content": response_str})
             responses.append(response_str)
+            prompt_tokens += response.usage.prompt_tokens
+            completion_tokens += response.usage.completion_tokens
 
         parsed_response = json.loads(responses[-1])
         if not parsed_response.get("decision"):
@@ -85,6 +89,8 @@ def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: Model =
             llm_identifier=model,
             unparsed_messages=[GPTMessage.from_dict(item) for item in messages],
             parsed_response=parsed_response,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
         )
     except Exception as e:
         print(f"An error occurred: {e}")
