@@ -23,9 +23,9 @@ class InvertableDilemmaWrapper(DilemmaWrapper):
 
     def to_dict(self):
         return {
-            "dilemma": super().to_dict(),
-            "action": self.action,
+            **super().to_dict(),
             "action_is_inverted": self.action_is_inverted,
+            "action": self.action,
         }
 
 
