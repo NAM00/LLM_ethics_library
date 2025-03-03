@@ -175,12 +175,14 @@ class GPTMessage:
 
 
 class Response:
-    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: Model, unparsed_messages: list[GPTMessage], parsed_response: dict):
+    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: Model, unparsed_messages: list[GPTMessage], parsed_response: dict, prompt_tokens: int, completion_tokens: int):
         self.wrapped_prompt = wrapped_prompt
         self.decision = decision
         self.llm_identifier = llm_identifier
         self.unparsed_messages = unparsed_messages
         self.parsed_response = parsed_response
+        self.prompt_tokens = prompt_tokens
+        self.completion_tokens = completion_tokens
 
     def to_dict(self):
         return {
@@ -209,8 +211,8 @@ class Response:
             "normalized_decision": self.normalized_decision.value,
             "has_unstructured_decision_text": self.has_unstructured_decision_text,
             "has_unstructured_decision_text_before_decision": self.has_unstructured_decision_text_before_decision,
-            "input_chars_len": self.input_chars_len,
-            "output_chars_len": self.output_chars_len,
+            "prompt_tokens": self.prompt_tokens,
+            "completion_tokens": self.completion_tokens,
             "decision_option_yes_index": self.get_decision_option_index(DecisionOption.YES),
             "decision_option_no_index": self.get_decision_option_index(DecisionOption.NO),
             "decision_option_undecided_index": self.get_decision_option_index(DecisionOption.UNDECIDED),
@@ -220,16 +222,6 @@ class Response:
 
     def get_messages_by_role(self, role: GPTMessageRole) -> list[GPTMessage]:
         return [message for message in self.unparsed_messages if message.role == role]
-
-    @property
-    def input_chars_len(self) -> int:
-        # TODO calculation is wrong
-        # inputs will be passed to the LLM multiple times
-        return sum(len(message.content) for message in self.unparsed_messages[:-1])
-
-    @property
-    def output_chars_len(self) -> int:
-        return sum(len(message.content) for message in self.get_messages_by_role(GPTMessageRole.ASSISSANT))
 
     @property
     def normalized_decision(self) -> DecisionOption:
