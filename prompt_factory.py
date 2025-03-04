@@ -85,7 +85,7 @@ def get_output_structure_description(ordered_output: list[OutputComponentType]):
     if ordered_output == [OutputComponentType.DECISION]:
         return "Do not reason in your response. Just provide your decision."
 
-    res = "First "
+    res = "First provide the "
     for i, content in enumerate(ordered_output):
         if i == 0:
             res += f"{output_component_type_values[content]['description']}"
