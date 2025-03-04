@@ -87,6 +87,8 @@ class PromptWrapper:
         dilemma_identifier: str,
         framework_identifier: str,
         base_prompt_identifier: str,
+        prompt_has_output_structure_description: bool,
+        prompt_has_output_structure_json_schema: bool,
         output_structure: OutputStructure,
         version: str,
     ):
@@ -95,6 +97,8 @@ class PromptWrapper:
         self.dilemma_identifier = dilemma_identifier
         self.framework_identifier = framework_identifier
         self.base_prompt_identifier = base_prompt_identifier
+        self.prompt_has_output_structure_description = prompt_has_output_structure_description
+        self.prompt_has_output_structure_json_schema = prompt_has_output_structure_json_schema
         self.output_structure = output_structure
         self.version = version
 
@@ -132,6 +136,8 @@ class PromptWrapper:
             dilemma_identifier=data["dilemma_identifier"],
             framework_identifier=data["framework_identifier"],
             base_prompt_identifier=data["base_prompt_identifier"],
+            prompt_has_output_structure_description=data["prompt_has_output_structure_description"],
+            prompt_has_output_structure_json_schema=data["prompt_has_output_structure_json_schema"],
             output_structure=OutputStructure.from_dict(
                 data["output_structure"]),
             version=data["version"],
