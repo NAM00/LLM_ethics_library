@@ -283,6 +283,7 @@ class Response:
 
         assert self.decision in [
             option for option in DecisionOption], f"Invalid decision value: {self.decision}. \n Check if restarting the jupyter kernel helps"
+
         if self.decision == DecisionOption.UNDECIDED:
             return DecisionOption.UNDECIDED
 
