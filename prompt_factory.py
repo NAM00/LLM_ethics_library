@@ -176,10 +176,10 @@ def add_id_to_prompts(prompts: list[PromptWrapper]):
     return prompts
 
 
-def get_all_possible_prompts(selected_dillemas=dilemmas):
+def get_all_possible_prompts():
     generated_prompts = []
     for base_prompt_identifier in base_prompts.keys():
-        for dilemma_identifier in selected_dillemas:
+        for dilemma_identifier in [dilemma.identifier for dilemma in dilemmas]:
             for framework_identifier in prompt_frameworks.keys():
                 generated_prompts += construct_prompts(dilemma_identifier,
                                                        framework_identifier, base_prompt_identifier)
