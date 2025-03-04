@@ -127,7 +127,7 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
         for add_output_structure_description_to_prompt in [True, False]:
             for add_output_structure_json_schema_to_prompt in [True, False]:
                 prompt = base_prompt.format(
-                    dilemma_description=dilemma['description'],
+                    dilemma_description=dilemma.description,
                     framework_description=framework['description'],
                 )
                 # region structure_prompt
