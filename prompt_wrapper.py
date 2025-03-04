@@ -25,6 +25,29 @@ class OutputStructure:
     def unsorted_output_components(self) -> list[OutputComponentType]:
         return [component for component in OutputComponentType if component in self.sorted_output_components]
 
+    @property
+    def has_unstructured_decision_text(self) -> bool:
+        return (
+            OutputComponentType.DECISION_REASON in self.sorted_decision_options
+            or self.first_unstructred_output
+        )
+
+    @property
+    def has_unstructured_decision_text_before_decision(self) -> bool:
+        if self.first_unstructred_output:
+            return True
+
+        sorted_output_options = self.sorted_decision_options
+        if OutputComponentType.DECISION_REASON in sorted_output_options:
+            decision_reason_index = sorted_output_options.index(OutputComponentType.DECISION_REASON)
+            decision_index = sorted_output_options.index(OutputComponentType.DECISION)
+            return decision_reason_index < decision_index
+
+        return False
+
+    def get_decision_option_index(self, decision_option: DecisionOption) -> int:
+        return self.sorted_decision_options.index(decision_option)
+
     def get_json_schema(self) -> object:
         """
         Get the OpenAI structured output schema for the current OutputStructure object.
@@ -62,6 +85,18 @@ class OutputStructure:
             "first_unstructred_output": self.first_unstructred_output,
             "unsorted_output_components": [component.value for component in self.unsorted_output_components],
         }
+
+    def to_analysis_dict(self):
+        res = self.to_dict()
+        res.update({
+            # New fields
+            "has_unstructured_decision_text": self.has_unstructured_decision_text,
+            "has_unstructured_decision_text_before_decision": self.has_unstructured_decision_text_before_decision,
+            "decision_option_yes_index": self.get_decision_option_index(DecisionOption.YES),
+            "decision_option_no_index": self.get_decision_option_index(DecisionOption.NO),
+            "decision_option_undecided_index": self.get_decision_option_index(DecisionOption.UNDECIDED),
+        })
+        return res
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -151,6 +186,16 @@ class PromptWrapper:
 
         return res
 
+    def to_analysis_dict(self):
+        res = self.to_dict()
+        res.update({
+            # Overwrite fields
+            "output_structure": self.output_structure.to_analysis_dict(),
+            # New fields
+            "dilemma": self.dilemma.to_dict(),
+        })
+        return res
+
 
 class Model(Enum):
     GPT4O = "gpt-4o"
@@ -216,14 +261,12 @@ class Response:
 
         res = self.to_dict()
         analysis_fields = {
+            # Overwrite fields
+            "wrapped_prompt": self.wrapped_prompt.to_analysis_dict(),
+            # New fields
             "normalized_decision": self.normalized_decision.value,
-            "has_unstructured_decision_text": self.has_unstructured_decision_text,
-            "has_unstructured_decision_text_before_decision": self.has_unstructured_decision_text_before_decision,
             "prompt_tokens": self.prompt_tokens,
             "completion_tokens": self.completion_tokens,
-            "decision_option_yes_index": self.get_decision_option_index(DecisionOption.YES),
-            "decision_option_no_index": self.get_decision_option_index(DecisionOption.NO),
-            "decision_option_undecided_index": self.get_decision_option_index(DecisionOption.UNDECIDED),
         }
         res.update(analysis_fields)
         return res
@@ -250,26 +293,3 @@ class Response:
                 return DecisionOption.YES
 
         return self.decision
-
-    @property
-    def has_unstructured_decision_text(self) -> bool:
-        return (
-            OutputComponentType.DECISION_REASON in self.wrapped_prompt.output_structure.sorted_decision_options
-            or self.wrapped_prompt.output_structure.first_unstructred_output
-        )
-
-    @property
-    def has_unstructured_decision_text_before_decision(self) -> bool:
-        if self.wrapped_prompt.output_structure.first_unstructred_output:
-            return True
-
-        sorted_output_options = self.wrapped_prompt.output_structure.sorted_decision_options
-        if OutputComponentType.DECISION_REASON in sorted_output_options:
-            decision_reason_index = sorted_output_options.index(OutputComponentType.DECISION_REASON)
-            decision_index = sorted_output_options.index(OutputComponentType.DECISION)
-            return decision_reason_index < decision_index
-
-        return False
-
-    def get_decision_option_index(self, decision_option: DecisionOption) -> int:
-        return self.wrapped_prompt.output_structure.sorted_decision_options.index(decision_option)
