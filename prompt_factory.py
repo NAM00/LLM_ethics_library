@@ -124,8 +124,8 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
 
     output_structures = get_all_output_structure_combinations()
     for output_structure in output_structures:
-        for add_output_structure_description_to_prompt in [True, False]:
-            for add_output_structure_json_schema_to_prompt in [True, False]:
+        for prompt_has_output_structure_description in [True, False]:
+            for prompt_has_output_structure_json_schema in [True, False]:
                 prompt = base_prompt.format(
                     dilemma_description=dilemma.description,
                     framework_description=framework['description'],
@@ -134,11 +134,11 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
                 # The structure_prompt tells the LLM how the output should be structured
                 structure_prompt = base_structure_prompt
 
-                if add_output_structure_description_to_prompt:
+                if prompt_has_output_structure_description:
                     output_structure_description = get_output_structure_description(
                         output_structure.sorted_output_components)
                     structure_prompt += f"\n{output_structure_description}"
-                if add_output_structure_json_schema_to_prompt:
+                if prompt_has_output_structure_json_schema:
                     # First create a local instance of output_component_type_values,
                     # to make sure the permutation of the "decision" output options is correct
                     #TODO this seems broken.
@@ -163,8 +163,8 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
                     dilemma_identifier=dilemma_identifier,
                     framework_identifier=framework_identifier,
                     base_prompt_identifier=base_prompt_identifier,
-                    prompt_has_output_structure_description=add_output_structure_description_to_prompt,
-                    prompt_has_output_structure_json_schema=add_output_structure_json_schema_to_prompt,
+                    prompt_has_output_structure_description=prompt_has_output_structure_description,
+                    prompt_has_output_structure_json_schema=prompt_has_output_structure_json_schema,
                     output_structure=output_structure,
                     version=VERSION
                 )
