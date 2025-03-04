@@ -1,5 +1,5 @@
 class DilemmaWrapper():
-    def __init__(self, identifier, description, context_identifier, type_identifier):
+    def __init__(self, identifier: str, description: str, context_identifier: str, type_identifier: str):
         self.identifier = identifier
         self.description = description
         self.context_identifier = context_identifier
@@ -15,7 +15,7 @@ class DilemmaWrapper():
 
 
 class InvertableDilemmaWrapper(DilemmaWrapper):
-    def __init__(self, identifier, description, context_identifier, type_identifier, action, action_is_inverted):
+    def __init__(self, identifier: str, description: str, context_identifier: str, type_identifier: str, action: str, action_is_inverted: bool):
         super().__init__(identifier, description, context_identifier, type_identifier)
         # If the answer is inverted. 
         # Is dependent on the context of the dilemma.
