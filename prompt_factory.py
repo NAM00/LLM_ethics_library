@@ -46,7 +46,7 @@ output_component_type_values = {
         # 'type': is provided later as it is permuted (see sorted_decision_options)
     },
     OutputComponentType.NORMATIVE_ETHICAL_THEORY_EXPLANATION: {
-        'description': "explain the normative ethical theory you are using",
+        'description': "provide an explanation of the normative ethical theory you are using",
         'json_key': 'normative_ethical_theory_explanation',
         'type': "string",
     },
