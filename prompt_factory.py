@@ -1,4 +1,5 @@
 import itertools
+import copy
 import json
 
 from .prompt_wrapper import DecisionOption, OutputComponentType, OutputStructure, PromptWrapper
@@ -139,18 +140,18 @@ def construct_prompts(dilemma_identifier: str, normative_ethical_theory_identifi
                         output_structure.sorted_output_components)
                     structure_prompt += f"\n{output_structure_description}"
                 if prompt_has_output_structure_json_schema:
-                    # First create a local instance of output_component_type_values,
-                    # to make sure the permutation of the "decision" output options is correct
-                    #TODO this seems broken.
-                    local_output_component_type_values = output_component_type_values.copy()
+                    # Make sure the ordering of the DECISION options is consistent
+                    local_output_component_type_values = copy.deepcopy(output_component_type_values)
                     local_output_component_type_values[OutputComponentType.DECISION]['type'] = [
-                    option_str[option] for option in output_structure.sorted_decision_options]
+                        option_str[option] for option in output_structure.sorted_decision_options
+                    ]
+
                     output_schema_json_schema = json.dumps({
-                        output_component_type_values[output_component]['json_key']: output_component_type_values[output_component]['type']
+                        local_output_component_type_values[output_component]['json_key']: local_output_component_type_values[output_component]['type']
                         for output_component in output_structure.sorted_output_components
                     }, indent=4)
                     structure_prompt += f"\n{output_schema_json_schema}"
-                #endregin
+                # endregin
 
                 if not output_structure.first_unstructred_output:
                     prompt += f"\n{structure_prompt}"
