@@ -43,7 +43,7 @@ output_component_type_values = {
     OutputComponentType.DECISION: {
         'description': "provide your decision",
         'json_key': 'decision'
-        # 'type': is provided generated later as it is permuted
+        # 'type': is provided later as it is permuted (see sorted_decision_options)
     },
     OutputComponentType.NORMATIVE_ETHICAL_THEORY_EXPLANATION: {
         'description': "explain the normative ethical theory you are using",
