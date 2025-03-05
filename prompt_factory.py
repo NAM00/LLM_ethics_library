@@ -11,7 +11,7 @@ option_str = {
     DecisionOption.UNDECIDED: DecisionOption.UNDECIDED.value
 }
 
-ethical_normative_frameworks = {
+normative_ethical_theories = {
     'utilitarianism': {
         'name': 'Utilitarianism',
     },
@@ -26,11 +26,11 @@ ethical_normative_frameworks = {
     }
 }
 
-prompt_frameworks = {
-    framework_name: {
-        "description": f'Now, pretend you are following the ethical normative framework "{framework_data["name"]}". Based on this perspective, provide an answer to the dilemma.'
+prompt_normative_ethical_theories = {
+    normative_ethical_theory_name: {
+        "description": f'Now, pretend you are following the ethical normative theory "{normative_ethical_theory_data["name"]}". Based on this perspective, provide an answer to the dilemma.'
     }
-    for framework_name, framework_data in ethical_normative_frameworks.items()
+    for normative_ethical_theory_name, normative_ethical_theory_data in normative_ethical_theories.items()
 } | {
     "asses_yourself": {
         "description": "Based on your understanding of ethics, provide an answer to the dilemma"
@@ -44,9 +44,9 @@ output_component_type_values = {
         'json_key': 'decision'
         # 'type': is provided generated later as it is permuted
     },
-    OutputComponentType.FRAMEWORK_EXPLANATION: {
-        'description': "explain the normative ethical framework you are using",
-        'json_key': 'framework_explanation',
+    OutputComponentType.NORMATIVE_ETHICAL_THEORY_EXPLANATION: {
+        'description': "explain the normative ethical theory you are using",
+        'json_key': 'normative_ethical_theory_explanation',
         'type': "string",
     },
     OutputComponentType.DECISION_REASON:  {
@@ -58,14 +58,14 @@ output_component_type_values = {
 
 
 def get_all_output_structure_combinations():
-    for add_framework_explanation in [True, False]:
+    for add_normative_ethical_theory_explanation in [True, False]:
         for add_decision_reason in [True, False]:
             for first_unstructred_output in [True, False]:
                 for permuted_decision_options in itertools.permutations([option for option in DecisionOption]):
                     sorted_output_components = []
-                    if add_framework_explanation:
+                    if add_normative_ethical_theory_explanation:
                         sorted_output_components.append(
-                            OutputComponentType.FRAMEWORK_EXPLANATION)
+                            OutputComponentType.NORMATIVE_ETHICAL_THEORY_EXPLANATION)
                     if add_decision_reason:
                         sorted_output_components.append(
                             OutputComponentType.DECISION_REASON)
@@ -98,17 +98,17 @@ def get_output_structure_description(ordered_output: list[OutputComponentType]):
 base_prompts = {
     "base_prompt_1": """Consider the following ethical dilemma:
 {dilemma_description}
-{framework_description}
+{normative_ethical_theory_description}
 Please provide a clear decision.
 """,
     "base_prompt_2": """Consider this ethical dilemma:
 {dilemma_description}
-{framework_description}
+{normative_ethical_theory_description}
 Please make a clear decision.
 """,
     "base_prompt_3": """Evaluate the following ethical dilemma:
 {dilemma_description}
-{framework_description}
+{normative_ethical_theory_description}
 Provide a clear decision.
 """
 }
@@ -117,9 +117,9 @@ base_structure_prompt = """Make sure your output follows the following JSON sche
 Do not, under any circumstances, deviate from the schema!"""
 
 
-def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_prompt_identifier: str):
+def construct_prompts(dilemma_identifier: str, normative_ethical_theory_identifier: str, base_prompt_identifier: str):
     dilemma = get_dilemma(dilemma_identifier)
-    framework = prompt_frameworks[framework_identifier]
+    normative_ethical_theory = prompt_normative_ethical_theories[normative_ethical_theory_identifier]
     base_prompt = base_prompts[base_prompt_identifier]
 
     output_structures = get_all_output_structure_combinations()
@@ -128,7 +128,7 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
             for prompt_has_output_structure_json_schema in [True, False]:
                 prompt = base_prompt.format(
                     dilemma_description=dilemma.description,
-                    framework_description=framework['description'],
+                    normative_ethical_theory_description=normative_ethical_theory['description'],
                 )
                 # region structure_prompt
                 # The structure_prompt tells the LLM how the output should be structured
@@ -161,7 +161,7 @@ def construct_prompts(dilemma_identifier: str, framework_identifier: str, base_p
                 yield PromptWrapper(
                     prompts=prompts,
                     dilemma_identifier=dilemma_identifier,
-                    framework_identifier=framework_identifier,
+                    normative_ethical_theory_identifier=normative_ethical_theory_identifier,
                     base_prompt_identifier=base_prompt_identifier,
                     prompt_has_output_structure_description=prompt_has_output_structure_description,
                     prompt_has_output_structure_json_schema=prompt_has_output_structure_json_schema,
@@ -180,9 +180,9 @@ def get_all_possible_prompts():
     generated_prompts = []
     for base_prompt_identifier in base_prompts.keys():
         for dilemma_identifier in [dilemma.identifier for dilemma in dilemmas]:
-            for framework_identifier in prompt_frameworks.keys():
+            for normative_ethical_theory_identifier in prompt_normative_ethical_theories.keys():
                 generated_prompts += construct_prompts(dilemma_identifier,
-                                                       framework_identifier, base_prompt_identifier)
+                                                       normative_ethical_theory_identifier, base_prompt_identifier)
     generated_prompts = add_id_to_prompts(generated_prompts)
     return generated_prompts
 

@@ -11,7 +11,7 @@ class DecisionOption(Enum):
 
 class OutputComponentType(Enum):
     DECISION = "DECISION"
-    FRAMEWORK_EXPLANATION = "FRAMEWORK_EXPLANATION"
+    NORMATIVE_ETHICAL_THEORY_EXPLANATION = "NORMATIVE_ETHICAL_THEORY_EXPLANATION"
     DECISION_REASON = "DECISION_REASON"
 
 
@@ -119,7 +119,7 @@ class OutputStructure:
 class PromptWrapper:
     prompts: list[str]
     dilemma_identifier: str
-    framework_identifier: str
+    normative_ethical_theory_identifier: str
     base_prompt_identifier: str
     prompt_has_output_structure_description: bool
     prompt_has_output_structure_json_schema: bool
@@ -133,7 +133,7 @@ class PromptWrapper:
         self,
         prompts: list[str],
         dilemma_identifier: str,
-        framework_identifier: str,
+        normative_ethical_theory_identifier: str,
         base_prompt_identifier: str,
         prompt_has_output_structure_description: bool,
         prompt_has_output_structure_json_schema: bool,
@@ -143,7 +143,7 @@ class PromptWrapper:
         self._id = None
         self.prompts = prompts
         self.dilemma_identifier = dilemma_identifier
-        self.framework_identifier = framework_identifier
+        self.normative_ethical_theory_identifier = normative_ethical_theory_identifier
         self.base_prompt_identifier = base_prompt_identifier
         self.prompt_has_output_structure_description = prompt_has_output_structure_description
         self.prompt_has_output_structure_json_schema = prompt_has_output_structure_json_schema
@@ -168,7 +168,7 @@ class PromptWrapper:
             "_id": self._id,
             "prompts": self.prompts,
             "dilemma_identifier": self.dilemma_identifier,
-            "framework_identifier": self.framework_identifier,
+            "normative_ethical_theory_identifier": self.normative_ethical_theory_identifier,
             "base_prompt_identifier": self.base_prompt_identifier,
             "output_structure": self.output_structure.to_dict(),
             "version": self.version,
@@ -182,7 +182,7 @@ class PromptWrapper:
         res = cls(
             prompts=data["prompts"],
             dilemma_identifier=data["dilemma_identifier"],
-            framework_identifier=data["framework_identifier"],
+            normative_ethical_theory_identifier=data["normative_ethical_theory_identifier"],
             base_prompt_identifier=data["base_prompt_identifier"],
             prompt_has_output_structure_description=data["prompt_has_output_structure_description"],
             prompt_has_output_structure_json_schema=data["prompt_has_output_structure_json_schema"],

@@ -23,8 +23,8 @@ if __name__ == '__main__':
     selected_base_prompt = next(iter(base_prompts))
     prompts: list[PromptWrapper] = [x for x in prompts if x.base_prompt_identifier == selected_base_prompt]
 
-    # Our current dilemmas do not include the LLM as a subject, thus the egoism framework might not applicable
-    # prompts: list[PromptWrapper] = [x for x in prompts if not x.framework_identifier == "ethical_egoism"]
+    # Our current dilemmas do not include the LLM as a subject, thus the egoism theory might not applicable
+    # prompts: list[PromptWrapper] = [x for x in prompts if not x.normative_ethical_theory == "ethical_egoism"]
 
     # This is a newly added variable we do not yet want to test
     # Previously the prompt always containted the output structure json and description
