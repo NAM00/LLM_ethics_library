@@ -27,7 +27,8 @@ normative_ethical_theories = {
     }
 }
 
-prompt_normative_ethical_theories = {
+# Either normative ethical theory or the model is asked to decide by itself
+ethical_frameworks = {
     normative_ethical_theory_name: {
         "description": f'Now, pretend you are following the ethical normative theory "{normative_ethical_theory_data["name"]}". Based on this perspective, provide an answer to the dilemma.'
     }
@@ -118,9 +119,9 @@ base_structure_prompt = """Make sure your output follows the following JSON sche
 Do not, under any circumstances, deviate from the schema!"""
 
 
-def construct_prompts(dilemma_identifier: str, normative_ethical_theory_identifier: str, base_prompt_identifier: str):
+def construct_prompts(dilemma_identifier: str, ethical_framework_identifier: str, base_prompt_identifier: str):
     dilemma = get_dilemma(dilemma_identifier)
-    normative_ethical_theory = prompt_normative_ethical_theories[normative_ethical_theory_identifier]
+    normative_ethical_theory = ethical_frameworks[ethical_framework_identifier]
     base_prompt = base_prompts[base_prompt_identifier]
 
     output_structures = get_all_output_structure_combinations()
@@ -162,7 +163,7 @@ def construct_prompts(dilemma_identifier: str, normative_ethical_theory_identifi
                 yield PromptWrapper(
                     prompts=prompts,
                     dilemma_identifier=dilemma_identifier,
-                    normative_ethical_theory_identifier=normative_ethical_theory_identifier,
+                    ethical_framework_identifier=ethical_framework_identifier,
                     base_prompt_identifier=base_prompt_identifier,
                     prompt_has_output_structure_description=prompt_has_output_structure_description,
                     prompt_has_output_structure_json_schema=prompt_has_output_structure_json_schema,
@@ -181,9 +182,12 @@ def get_all_possible_prompts():
     generated_prompts = []
     for base_prompt_identifier in base_prompts.keys():
         for dilemma_identifier in [dilemma.identifier for dilemma in dilemmas]:
-            for normative_ethical_theory_identifier in prompt_normative_ethical_theories.keys():
-                generated_prompts += construct_prompts(dilemma_identifier,
-                                                       normative_ethical_theory_identifier, base_prompt_identifier)
+            for ethical_framework_identifier in ethical_frameworks.keys():
+                generated_prompts += construct_prompts(
+                    dilemma_identifier,
+                    ethical_framework_identifier,
+                    base_prompt_identifier
+                )
     generated_prompts = add_id_to_prompts(generated_prompts)
     return generated_prompts
 
