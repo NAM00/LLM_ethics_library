@@ -26,7 +26,8 @@ class OutputStructure:
         self.first_unstructred_output = first_unstructred_output
 
     @property
-    def unsorted_output_components(self) -> list[OutputComponentType]:
+    def default_order_decision_options(self) -> list[OutputComponentType]:
+        """Returns the contained decision options in the default order"""
         return [component for component in OutputComponentType if component in self.sorted_output_components]
 
     @property
@@ -87,7 +88,7 @@ class OutputStructure:
             "sorted_output_components": [component.value for component in self.sorted_output_components],
             "sorted_decision_options": [option.value for option in self.sorted_decision_options],
             "first_unstructred_output": self.first_unstructred_output,
-            "unsorted_output_components": [component.value for component in self.unsorted_output_components],
+            "unsorted_output_components": [component.value for component in self.default_order_decision_options],
         }
 
     def to_analysis_dict(self):
