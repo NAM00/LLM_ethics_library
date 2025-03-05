@@ -16,6 +16,10 @@ class OutputComponentType(Enum):
 
 
 class OutputStructure:
+    sorted_output_components: list[OutputComponentType]
+    sorted_decision_options: list[DecisionOption]
+    first_unstructred_output: bool
+
     def __init__(self, sorted_output_components: list[OutputComponentType], sorted_decision_options: list[DecisionOption], first_unstructred_output: bool):
         self.sorted_output_components = sorted_output_components
         self.sorted_decision_options = sorted_decision_options
@@ -113,6 +117,15 @@ class OutputStructure:
 
 
 class PromptWrapper:
+    prompts: list[str]
+    dilemma_identifier: str
+    framework_identifier: str
+    base_prompt_identifier: str
+    prompt_has_output_structure_description: bool
+    prompt_has_output_structure_json_schema: bool
+    output_structure: OutputStructure
+    version: str
+
     def add_id(self, _id: str):
         self._id = _id
 
@@ -226,7 +239,14 @@ class GPTMessage:
 
 
 class Response:
-    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: Model, unparsed_messages: list[GPTMessage], parsed_response: dict, prompt_tokens: int, completion_tokens: int):
+    wrapped_prompt: PromptWrapper
+    decision: DecisionOption
+    llm_identifier: LlmName
+    unparsed_messages: list[LlmMessage]
+    parsed_response: dict
+    prompt_tokens: int
+    completion_tokens: int
+
         self.wrapped_prompt = wrapped_prompt
         self.decision = decision
         self.llm_identifier = llm_identifier
