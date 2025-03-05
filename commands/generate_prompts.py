@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     # This is a newly added variable we do not yet want to test
     # Previously the prompt always containted the output structure json and description
-    prompts: list[PromptWrapper] = [x for x in prompts if not x.prompt_has_output_structure_description is True]
-    prompts: list[PromptWrapper] = [x for x in prompts if not x.prompt_has_output_structure_json_schema is True]
+    prompts: list[PromptWrapper] = [x for x in prompts if x.prompt_has_output_structure_description is True]
+    prompts: list[PromptWrapper] = [x for x in prompts if x.prompt_has_output_structure_json_schema is True]
     generate_prompt_json(prompts, prompts_file_path)
     print(f"generated {len(prompts)} prompts and saved them to {prompts_file_path}")
