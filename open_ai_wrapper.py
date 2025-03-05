@@ -22,7 +22,7 @@ def test_openai_api(api_key: str):
         raise e
 
 
-def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: Model = Model.GPT4O) -> Response:
+def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: LlmName = LlmName.GPT4O) -> Response:
     openai.api_key = api_key
 
     messages = []
@@ -87,7 +87,7 @@ def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: Model =
             wrapped_prompt=wrapped_prompt,
             decision=decision,
             llm_identifier=model,
-            unparsed_messages=[GPTMessage.from_dict(item) for item in messages],
+            unparsed_messages=[LlmMessage.from_dict(item) for item in messages],
             parsed_response=parsed_response,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,

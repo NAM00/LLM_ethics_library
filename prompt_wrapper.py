@@ -210,17 +210,17 @@ class PromptWrapper:
         return res
 
 
-class Model(Enum):
+class LlmName(Enum):
     GPT4O = "gpt-4o"
 
 
-class GPTMessageRole(Enum):
+class LlmMessageRole(Enum):
     SYSTEM = "system"
     ASSISSANT = "assistant"
 
 
-class GPTMessage:
-    def __init__(self, role: GPTMessageRole, content: str):
+class LlmMessage:
+    def __init__(self, role: LlmMessageRole, content: str):
         self.role = role
         self.content = content
 
@@ -233,7 +233,7 @@ class GPTMessage:
     @classmethod
     def from_dict(cls, data: dict):
         return cls(
-            role=GPTMessageRole(data["role"]),
+            role=LlmMessageRole(data["role"]),
             content=data["content"],
         )
 
@@ -247,6 +247,7 @@ class Response:
     prompt_tokens: int
     completion_tokens: int
 
+    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: LlmName, unparsed_messages: list[LlmMessage], parsed_response: dict, prompt_tokens: int, completion_tokens: int):
         self.wrapped_prompt = wrapped_prompt
         self.decision = decision
         self.llm_identifier = llm_identifier
@@ -269,8 +270,8 @@ class Response:
         return cls(
             wrapped_prompt=PromptWrapper.from_dict(data["wrapped_prompt"]),
             decision=DecisionOption(data["decision"]),
-            llm_identifier=Model(data["llm_identifier"]),
-            unparsed_messages=[GPTMessage.from_dict(item) for item in data["unparsed_messages"]],
+            llm_identifier=LlmName(data["llm_identifier"]),
+            unparsed_messages=[LlmMessage.from_dict(item) for item in data["unparsed_messages"]],
             parsed_response=data["parsed_response"],
             prompt_tokens=data["prompt_tokens"],
             completion_tokens=data["completion_tokens"],
@@ -291,7 +292,7 @@ class Response:
         res.update(analysis_fields)
         return res
 
-    def get_messages_by_role(self, role: GPTMessageRole) -> list[GPTMessage]:
+    def get_messages_by_role(self, role: LlmMessageRole) -> list[LlmMessage]:
         return [message for message in self.unparsed_messages if message.role == role]
 
     @property
