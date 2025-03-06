@@ -311,7 +311,7 @@ class Response:
         if self.decision == DecisionOption.UNDECIDED:
             return DecisionOption.UNDECIDED
 
-        if self.wrapped_prompt.dilemma.answer_is_inverted:
+        if self.wrapped_prompt.dilemma.action_is_inverted:
             if self.decision == DecisionOption.YES:
                 return DecisionOption.NO
             elif self.decision == DecisionOption.NO:
