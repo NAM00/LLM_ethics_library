@@ -34,7 +34,7 @@ ethical_frameworks = {
     }
     for normative_ethical_theory_name, normative_ethical_theory_data in normative_ethical_theories.items()
 } | {
-    "asses_yourself": {
+    "decide_yourself": {
         "description": "Based on your understanding of ethics, provide an answer to the dilemma"
     }
 }
