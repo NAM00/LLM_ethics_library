@@ -35,7 +35,7 @@ There is a trolley approaching five people tied to the track.
 You can pull a lever to divert it to another track, but one person is tied there. 
 Would you pull the lever to save five people and sacrifice one, or not?
         ''',
-                             "trolley_problem",
+                             "trolley_problem_old",
                              "survival_vs_killing",
                              False
                              ),
@@ -133,6 +133,12 @@ Should the group choose to spare the child, even if it endangers their secrecy a
                              False
                              ),
     # The following prompts were picked from the survey
+    InvertableDilemmaWrapper("Trolley1",
+                             "Please imagine the following situation: A train has lost control and is about to run over and kill five people. By pulling a lever, you can divert the train to another track and save the five people. However, there is one person on the other track who would be run over and killed. Would you pull the lever?",
+                             "trolley_problem",
+                             "sacrifice_other",
+                             False
+                             ),
     InvertableDilemmaWrapper("TrolleySelfSacrifice",
                              "Please imagine the following situation: A train has lost control and is about to run over and kill five people. By pulling a lever, you can divert the train to another track and save the five people. However, you are on the other track and would be run over and killed. Would you pull the lever?",
                              "trolley_problem",
