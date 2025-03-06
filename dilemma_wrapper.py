@@ -146,13 +146,13 @@ Should the group choose to spare the child, even if it endangers their secrecy a
                              False
                              ),
     InvertableDilemmaWrapper("SurDem",
-                             "Please imagine the following situation: A surveillance software could be built into all smartphones in a democratic country. With No Yes Yes, onto the track with the other person Yes, onto the track with myself No this software, perpetrators who create or distribute child abuse material would be caught, and children would be protected. However, activists who are inconvenient to the state could also be surveilled and could face negative consequences. Would you support this surveillance software being built in?",
+                             "Please imagine the following situation: A surveillance software could be built into all smartphones in a democratic country. With this software, perpetrators who create or distribute child abuse material would be caught, and children would be protected. However, activists who are inconvenient to the state could also be surveilled and could face negative consequences. Would you support this surveillance software being built in?",
                              "surveillance",
                              "privacy_vs_democracy",
                              False
                              ),
     InvertableDilemmaWrapper("SurGen",
-                             "Please imagine the following situation: A surveillance software could be built into all digital devices. With this software, all digital No Yes No Yes crimes would be solved, but there would be no digital privacy anymore. Would you support this surveillance software being built in?",
+                             "Please imagine the following situation: A surveillance software could be built into all digital devices. With this software, all digital crimes would be solved, but there would be no digital privacy anymore. Would you support this surveillance software being built in?",
                              "surveillance",
                              "privacy_vs_crime",
                              False
