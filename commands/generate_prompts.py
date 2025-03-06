@@ -9,9 +9,9 @@ from library.version import VERSION
 prompts_folder_path = os.path.join(os.path.dirname(__file__), "../data/prompts")
 
 if __name__ == '__main__':
-    # Generation forwrapped prompts - v1.6
-    prompts_file_path = os.path.join(prompts_folder_path, f"wrapped_prompts_v{VERSION}.json")
+    # Generate wrapped prompts for - v1.6
     prompts = get_all_possible_prompts()
+    print(f"There are a total of {len(prompts)} prompts before filtering")
 
     # Selected dilemmas
     prompts: list[PromptWrapper] = [x for x in prompts if x.dilemma.context_identifier in [
@@ -32,5 +32,7 @@ if __name__ == '__main__':
     # Previously the prompt always containted the output structure json and description
     prompts: list[PromptWrapper] = [x for x in prompts if x.prompt_has_output_structure_description is True]
     prompts: list[PromptWrapper] = [x for x in prompts if x.prompt_has_output_structure_json_schema is True]
+
+    prompts_file_path = os.path.join(prompts_folder_path, f"wrapped_prompts_v{VERSION}.json")
     generate_prompt_json(prompts, prompts_file_path)
     print(f"generated {len(prompts)} prompts and saved them to {prompts_file_path}")
