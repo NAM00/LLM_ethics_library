@@ -12,6 +12,7 @@ if __name__ == '__main__':
     # Generate wrapped prompts for - v1.6
     prompts = get_all_possible_prompts()
     print(f"There are a total of {len(prompts)} prompts before filtering")
+    print(f"Performing filtering...")
 
     # Selected dilemmas
     prompts: list[PromptWrapper] = [x for x in prompts if x.dilemma.context_identifier in [
@@ -35,4 +36,3 @@ if __name__ == '__main__':
 
     prompts_file_path = os.path.join(prompts_folder_path, f"wrapped_prompts_v{VERSION}.json")
     generate_prompt_json(prompts, prompts_file_path)
-    print(f"generated {len(prompts)} prompts and saved them to {prompts_file_path}")

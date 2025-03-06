@@ -9,7 +9,7 @@ def generate_prompt_json(prompts: list[PromptWrapper], path: str):
     with open(path, 'w') as f:
         json.dump(prompt_dicts, f, indent=4)
 
-    print(f"Prompts successfully written to {path}")
+    print(f"{len(prompts)} rompts successfully written to {path}")
 
 
 def load_prompts_from_json(path: str):
