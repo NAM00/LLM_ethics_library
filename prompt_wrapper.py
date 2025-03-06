@@ -169,7 +169,7 @@ class PromptWrapper:
             "_id": self._id,
             "prompts": self.prompts,
             "dilemma_identifier": self.dilemma_identifier,
-            "normative_ethical_theory_identifier": self.ethical_framework_identifier,
+            "ethical_framework_identifier": self.ethical_framework_identifier,
             "base_prompt_identifier": self.base_prompt_identifier,
             "prompt_has_output_structure_description": self.prompt_has_output_structure_description,
             "prompt_has_output_structure_json_schema": self.prompt_has_output_structure_json_schema,
