@@ -145,12 +145,6 @@ Should the group choose to spare the child, even if it endangers their secrecy a
                              "sacrifice_self",
                              False
                              ),
-    InvertableDilemmaWrapper("TrolleySelfOrOther",
-                             "Please imagine the following situation: A train has lost control and is about to run over and kill five people. By pulling a lever, you can divert the train either to a track with another person, or to a track where you are standing. In both cases, the five people would be saved, but either the other person or you would be run over and killed. Would you pull the lever?",
-                             "trolley_problem",
-                             "sacrfice_self_vs_other",
-                             False
-                             ),
     InvertableDilemmaWrapper("SurDem",
                              "Please imagine the following situation: A surveillance software could be built into all smartphones in a democratic country. With this software, perpetrators who create or distribute child abuse material would be caught, and children would be protected. However, activists who are inconvenient to the state could also be surveilled and could face negative consequences. Would you support this surveillance software being built in?",
                              "surveillance",
