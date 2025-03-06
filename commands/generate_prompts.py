@@ -17,6 +17,8 @@ if __name__ == '__main__':
     prompts: list[PromptWrapper] = [x for x in prompts if x.dilemma.context_identifier in [
         "child_abuse_prevention",
         "public_health",
+        "trolley_problem",
+        "surveillance",
     ]]
 
     # We found the base_prompt not to have a significant impact, so we will only use base_prompt_1
