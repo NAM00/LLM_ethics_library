@@ -266,6 +266,8 @@ class Response:
             "llm_identifier": self.llm_identifier.value,
             "unparsed_messages": [message.to_dict() for message in self.unparsed_messages],
             "parsed_response": self.parsed_response,
+            "prompt_tokens": self.prompt_tokens,
+            "completion_tokens": self.completion_tokens,
         }
 
     @classmethod
@@ -289,8 +291,6 @@ class Response:
             "wrapped_prompt": self.wrapped_prompt.to_analysis_dict(),
             # New fields
             "normalized_decision": self.normalized_decision.value,
-            "prompt_tokens": self.prompt_tokens,
-            "completion_tokens": self.completion_tokens,
         }
         res.update(analysis_fields)
         return res
