@@ -1,7 +1,6 @@
-from typing import Dict, Type
-from pydantic import BaseModel, create_model
-
 from enum import Enum
+
+from .dilemma_wrapper import DilemmaWrapper, InvertableDilemmaWrapper, get_dilemma
 
 
 class DecisionOption(Enum):
@@ -10,29 +9,49 @@ class DecisionOption(Enum):
     UNDECIDED = "UNDECIDED"
 
 
-ALL_DECISION_OPTIONS = [DecisionOption.YES,
-                        DecisionOption.NO, DecisionOption.UNDECIDED]
-
-
 class OutputComponentType(Enum):
     DECISION = "DECISION"
-    FRAMEWORK_EXPLANATION = "FRAMEWORK_EXPLANATION"
+    NORMATIVE_ETHICAL_THEORY_EXPLANATION = "NORMATIVE_ETHICAL_THEORY_EXPLANATION"
     DECISION_REASON = "DECISION_REASON"
 
 
-def create_response_class(fields: Dict[str, Type]):
-    return create_model('DynamicResponse', **{score: (score_type, ...) for score, score_type in fields.items()})
-
-
 class OutputStructure:
+    sorted_output_components: list[OutputComponentType]
+    sorted_decision_options: list[DecisionOption]
+    first_unstructred_output: bool
+
     def __init__(self, sorted_output_components: list[OutputComponentType], sorted_decision_options: list[DecisionOption], first_unstructred_output: bool):
         self.sorted_output_components = sorted_output_components
         self.sorted_decision_options = sorted_decision_options
         self.first_unstructred_output = first_unstructred_output
 
     @property
-    def unsorted_output_components(self) -> list[OutputComponentType]:
+    def default_order_decision_options(self) -> list[OutputComponentType]:
+        """Returns the contained decision options in the default order"""
         return [component for component in OutputComponentType if component in self.sorted_output_components]
+
+    @property
+    def has_unstructured_decision_text(self) -> bool:
+        return (
+            OutputComponentType.DECISION_REASON in self.sorted_decision_options
+            or self.first_unstructred_output
+        )
+
+    @property
+    def has_unstructured_decision_text_before_decision(self) -> bool:
+        if self.first_unstructred_output:
+            return True
+
+        sorted_output_options = self.sorted_decision_options
+        if OutputComponentType.DECISION_REASON in sorted_output_options:
+            decision_reason_index = sorted_output_options.index(OutputComponentType.DECISION_REASON)
+            decision_index = sorted_output_options.index(OutputComponentType.DECISION)
+            return decision_reason_index < decision_index
+
+        return False
+
+    def get_decision_option_index(self, decision_option: DecisionOption) -> int:
+        return self.sorted_decision_options.index(decision_option)
 
     def get_json_schema(self) -> object:
         """
@@ -69,8 +88,20 @@ class OutputStructure:
             "sorted_output_components": [component.value for component in self.sorted_output_components],
             "sorted_decision_options": [option.value for option in self.sorted_decision_options],
             "first_unstructred_output": self.first_unstructred_output,
-            "unsorted_output_components": [component.value for component in self.unsorted_output_components],
+            "unsorted_output_components": [component.value for component in self.default_order_decision_options],
         }
+
+    def to_analysis_dict(self):
+        res = self.to_dict()
+        res.update({
+            # New fields
+            "has_unstructured_decision_text": self.has_unstructured_decision_text,
+            "has_unstructured_decision_text_before_decision": self.has_unstructured_decision_text_before_decision,
+            "decision_option_yes_index": self.get_decision_option_index(DecisionOption.YES),
+            "decision_option_no_index": self.get_decision_option_index(DecisionOption.NO),
+            "decision_option_undecided_index": self.get_decision_option_index(DecisionOption.UNDECIDED),
+        })
+        return res
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -87,42 +118,61 @@ class OutputStructure:
 
 
 class PromptWrapper:
-    def add_id(self, id: int):
-        self.id = id
+    prompts: list[str]
+    dilemma_identifier: str
+    ethical_framework_identifier: str
+    base_prompt_identifier: str
+    prompt_has_output_structure_description: bool
+    prompt_has_output_structure_json_schema: bool
+    output_structure: OutputStructure
+    version: str
+
+    def add_id(self, _id: str):
+        self._id = _id
 
     def __init__(
         self,
         prompts: list[str],
         dilemma_identifier: str,
-        framework_identifier: str,
+        ethical_framework_identifier: str,
         base_prompt_identifier: str,
+        prompt_has_output_structure_description: bool,
+        prompt_has_output_structure_json_schema: bool,
         output_structure: OutputStructure,
         version: str,
     ):
-        self.id = None
+        self._id = None
         self.prompts = prompts
         self.dilemma_identifier = dilemma_identifier
-        self.framework_identifier = framework_identifier
+        self.ethical_framework_identifier = ethical_framework_identifier
         self.base_prompt_identifier = base_prompt_identifier
+        self.prompt_has_output_structure_description = prompt_has_output_structure_description
+        self.prompt_has_output_structure_json_schema = prompt_has_output_structure_json_schema
         self.output_structure = output_structure
         self.version = version
 
+    @property
+    def dilemma(self) -> DilemmaWrapper:
+        return get_dilemma(self.dilemma_identifier)
+
     def __str__(self):
-        str = "--------PromptWrapper--------"
+        res = "--------PromptWrapper--------"
         for prompt in self.prompts:
-            str += f"\nprompt:\n{prompt}"
-        str += "-----------------------------"
-        return str
+            res += f"\nprompt:\n{prompt}"
+        res += "-----------------------------"
+        return res
 
     def to_dict(self):
-        if self.id is None:
+        if self._id is None:
             raise Exception("PromptWrapper ID is None")
         return {
-            "id": self.id,
+            "_id": self._id,
             "prompts": self.prompts,
             "dilemma_identifier": self.dilemma_identifier,
-            "framework_identifier": self.framework_identifier,
+            "ethical_framework_identifier": self.ethical_framework_identifier,
             "base_prompt_identifier": self.base_prompt_identifier,
+            "prompt_has_output_structure_description": self.prompt_has_output_structure_description,
+            "prompt_has_output_structure_json_schema": self.prompt_has_output_structure_json_schema,
             "output_structure": self.output_structure.to_dict(),
             "version": self.version,
         }
@@ -135,28 +185,45 @@ class PromptWrapper:
         res = cls(
             prompts=data["prompts"],
             dilemma_identifier=data["dilemma_identifier"],
-            framework_identifier=data["framework_identifier"],
+            ethical_framework_identifier=data["ethical_framework_identifier"],
             base_prompt_identifier=data["base_prompt_identifier"],
+            prompt_has_output_structure_description=data["prompt_has_output_structure_description"],
+            prompt_has_output_structure_json_schema=data["prompt_has_output_structure_json_schema"],
             output_structure=OutputStructure.from_dict(
                 data["output_structure"]),
             version=data["version"],
         )
 
-        res.add_id(data["id"])
+        # TODO remove this. version1.5 called id "id" and now it is called "_id"
+        _id = data.get("_id")
+        if not _id:
+            _id = data.get("id")
+        res.add_id(_id)
+
+        return res
+
+    def to_analysis_dict(self):
+        res = self.to_dict()
+        res.update({
+            # Overwrite fields
+            "output_structure": self.output_structure.to_analysis_dict(),
+            # New fields
+            "dilemma": self.dilemma.to_dict(),
+        })
         return res
 
 
-class Model(Enum):
+class LlmName(Enum):
     GPT4O = "gpt-4o"
 
 
-class GPTMessageRole(Enum):
+class LlmMessageRole(Enum):
     SYSTEM = "system"
     ASSISSANT = "assistant"
 
 
-class GPTMessage:
-    def __init__(self, role: GPTMessageRole, content: str):
+class LlmMessage:
+    def __init__(self, role: LlmMessageRole, content: str):
         self.role = role
         self.content = content
 
@@ -169,18 +236,28 @@ class GPTMessage:
     @classmethod
     def from_dict(cls, data: dict):
         return cls(
-            role=GPTMessageRole(data["role"]),
+            role=LlmMessageRole(data["role"]),
             content=data["content"],
         )
 
 
 class Response:
-    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: Model, unparsed_messages: list[GPTMessage], parsed_response: dict):
+    wrapped_prompt: PromptWrapper
+    decision: DecisionOption
+    llm_identifier: LlmName
+    unparsed_messages: list[LlmMessage]
+    parsed_response: dict
+    prompt_tokens: int
+    completion_tokens: int
+
+    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: LlmName, unparsed_messages: list[LlmMessage], parsed_response: dict, prompt_tokens: int, completion_tokens: int):
         self.wrapped_prompt = wrapped_prompt
         self.decision = decision
         self.llm_identifier = llm_identifier
         self.unparsed_messages = unparsed_messages
         self.parsed_response = parsed_response
+        self.prompt_tokens = prompt_tokens
+        self.completion_tokens = completion_tokens
 
     def to_dict(self):
         return {
@@ -189,6 +266,8 @@ class Response:
             "llm_identifier": self.llm_identifier.value,
             "unparsed_messages": [message.to_dict() for message in self.unparsed_messages],
             "parsed_response": self.parsed_response,
+            "prompt_tokens": self.prompt_tokens,
+            "completion_tokens": self.completion_tokens,
         }
 
     @classmethod
@@ -196,26 +275,46 @@ class Response:
         return cls(
             wrapped_prompt=PromptWrapper.from_dict(data["wrapped_prompt"]),
             decision=DecisionOption(data["decision"]),
-            llm_identifier=Model(data["llm_identifier"]),
-            unparsed_messages=[GPTMessage.from_dict(item) for item in data["unparsed_messages"]],
+            llm_identifier=LlmName(data["llm_identifier"]),
+            unparsed_messages=[LlmMessage.from_dict(item) for item in data["unparsed_messages"]],
             parsed_response=data["parsed_response"],
+            prompt_tokens=data["prompt_tokens"],
+            completion_tokens=data["completion_tokens"],
         )
 
-    def get_messages_by_role(self, role: GPTMessageRole) -> list[GPTMessage]:
+    def to_analysis_dict(self):
+        """Extends the to_dict method to include additional fields that are useful for analysis"""
+
+        res = self.to_dict()
+        analysis_fields = {
+            # Overwrite fields
+            "wrapped_prompt": self.wrapped_prompt.to_analysis_dict(),
+            # New fields
+            "normalized_decision": self.normalized_decision.value,
+        }
+        res.update(analysis_fields)
+        return res
+
+    def get_messages_by_role(self, role: LlmMessageRole) -> list[LlmMessage]:
         return [message for message in self.unparsed_messages if message.role == role]
 
     @property
-    def input_tokens_len(self) -> int:
-        sum = 0
-        for i in range(0, len(self.unparsed_messages) - 1):
-            for j in range(0, i + 1):
-                sum += len(self.unparsed_messages[j].content)
-        return sum
+    def normalized_decision(self) -> DecisionOption:
+        """InvertableDilemmaWrapper allows for the decision to be inverted. This property returns the normalized decision."""
 
-    @property
-    def output_tokens_len(self) -> int:
-        sum = 0
-        assistant_messages = self.get_messages_by_role(GPTMessageRole.ASSISSANT)
-        for message in assistant_messages:
-            sum += len(message.content)
-        return sum
+        if not isinstance(self.wrapped_prompt.dilemma, InvertableDilemmaWrapper):
+            return self.decision
+
+        assert self.decision in [
+            option for option in DecisionOption], f"Invalid decision value: {self.decision}. \n Check if restarting the jupyter kernel helps"
+
+        if self.decision == DecisionOption.UNDECIDED:
+            return DecisionOption.UNDECIDED
+
+        if self.wrapped_prompt.dilemma.action_is_inverted:
+            if self.decision == DecisionOption.YES:
+                return DecisionOption.NO
+            elif self.decision == DecisionOption.NO:
+                return DecisionOption.YES
+
+        return self.decision
