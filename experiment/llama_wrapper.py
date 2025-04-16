@@ -22,49 +22,37 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
             messages.append({"role": "system", "content": prompt})
             kwargs = {}
             # We add the the response_format either directly or in the second prompt where its asked to parse its ouput.
-            if not item.output_structure.first_unstructred_output or count == 2:
-                response_format = {
-                    "type": "json_schema",
-                    "json_schema": {
-                        "name": "response",
-                        "strict": True,
-                        "schema": item.output_structure.get_json_schema()
-                    }
-                }
-                kwargs["response_format"] = response_format
 
-                pipeline = transformers.pipeline(
-                    "text-generation",
-                    model=MODEL_NAME,
-                    device_map="cuda"
-                )
-                outputs = pipeline(
-                    messages,
-                    max_new_tokens=1000,
-                    do_sample=False
-                )
-                response = outputs[0]["generated_text"]
-                print(response)
-                with open("./test.jsonl", "a") as file:
-                    file.write(json.dumps(response) + "\n")
+            pipeline = transformers.pipeline(
+                "text-generation",
+                model=MODEL_NAME,
+                device_map="cuda"
+            )
+            outputs = pipeline(
+                messages
+            )
+            response = outputs[0]["generated_text"]
+            print(response)
+            with open("./test.jsonl", "a") as file:
+                file.write(json.dumps(response) + "\n")
 
-                if len(response.choices) == 0:
-                    raise Exception("No response from " + MODEL_NAME)
-                if len(response.choices) > 1:
-                    raise Exception("More than one response from " + MODEL_NAME)
-                if response.choices[0].message.role != "assistant":
-                    raise Exception("Response from " + MODEL_NAME + " OpenAI API is not from the assistant")
-                if response.choices[0].message.content == "":
-                    raise Exception("Response from " + MODEL_NAME + " is empty")
-                if response.choices[0].finish_reason != "stop":
-                    raise Exception("Response finish_reason is not 'stop'")
+            if len(response.choices) == 0:
+                raise Exception("No response from " + MODEL_NAME)
+            if len(response.choices) > 1:
+                raise Exception("More than one response from " + MODEL_NAME)
+            if response.choices[0].message.role != "assistant":
+                raise Exception("Response from " + MODEL_NAME + " OpenAI API is not from the assistant")
+            if response.choices[0].message.content == "":
+                raise Exception("Response from " + MODEL_NAME + " is empty")
+            if response.choices[0].finish_reason != "stop":
+                raise Exception("Response finish_reason is not 'stop'")
 
-                response_str = response.choices[0].message.content
-                messages.append(
-                    {"role": "assistant", "content": response_str})
-                responses.append(response_str)
-                prompt_tokens += response.usage.prompt_tokens
-                completion_tokens += response.usage.completion_tokens
+            response_str = response.choices[0].message.content
+            messages.append(
+                {"role": "assistant", "content": response_str})
+            responses.append(response_str)
+            prompt_tokens += response.usage.prompt_tokens
+            completion_tokens += response.usage.completion_tokens
 
         parsed_response = json.loads(responses[-1])
         if not parsed_response.get("decision"):
