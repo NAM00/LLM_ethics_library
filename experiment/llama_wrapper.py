@@ -37,21 +37,7 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
             with open("./test.jsonl", "a") as file:
                 file.write(json.dumps(response) + "\n")
 
-            if len(response.choices) == 0:
-                raise Exception("No response from " + MODEL_NAME)
-            if len(response.choices) > 1:
-                raise Exception("More than one response from " + MODEL_NAME)
-            if response.choices[0].message.role != "assistant":
-                raise Exception("Response from " + MODEL_NAME + " OpenAI API is not from the assistant")
-            if response.choices[0].message.content == "":
-                raise Exception("Response from " + MODEL_NAME + " is empty")
-            if response.choices[0].finish_reason != "stop":
-                raise Exception("Response finish_reason is not 'stop'")
 
-            response_str = response.choices[0].message.content
-            messages.append(
-                {"role": "assistant", "content": response_str})
-            responses.append(response_str)
             prompt_tokens += response.usage.prompt_tokens
             completion_tokens += response.usage.completion_tokens
 
@@ -72,7 +58,6 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
         )
     except Exception as e:
         print(f"An error occurred: {e}")
-        raise e
 
 
 if __name__ == '__main__':
