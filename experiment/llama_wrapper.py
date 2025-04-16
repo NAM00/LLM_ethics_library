@@ -43,7 +43,7 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
                     max_new_tokens=1000,
                     do_sample=False
                 )
-                response = outputs[0]["generated_text"]["content"]
+                response = outputs[0]["generated_text"]
                 print(response)
                 with open("./test.jsonl", "a") as file:
                     file.write(json.dumps(response) + "\n")
