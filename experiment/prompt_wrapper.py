@@ -1,10 +1,9 @@
 from enum import Enum
 from multiprocessing.managers import public_methods
-from typing import List
 
 from sympy import public
 
-from experiment.dilemma_wrapper import DilemmaWrapper, InvertableDilemmaWrapper, get_dilemma
+from dilemma_wrapper import DilemmaWrapper, InvertableDilemmaWrapper, get_dilemma
 
 
 class DecisionOption(Enum):
@@ -254,13 +253,13 @@ class Response:
     wrapped_prompt: PromptWrapper
     decision: DecisionOption
     llm_identifier: LlmName
-    unparsed_messages: List[LlmMessage]
+    unparsed_messages: list[LlmMessage]
     parsed_response: dict
     prompt_tokens: int
     completion_tokens: int
 
     def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: LlmName,
-                 unparsed_messages: List[LlmMessage], parsed_response: dict, prompt_tokens: int,
+                 unparsed_messages: list[LlmMessage], parsed_response: dict, prompt_tokens: int,
                  completion_tokens: int):
         self.wrapped_prompt = wrapped_prompt
         self.decision = decision
@@ -306,7 +305,7 @@ class Response:
         res.update(analysis_fields)
         return res
 
-    def get_messages_by_role(self, role: LlmMessageRole) -> List[LlmMessage]:
+    def get_messages_by_role(self, role: LlmMessageRole) -> list[LlmMessage]:
         return [message for message in self.unparsed_messages if message.role == role]
 
     @property
