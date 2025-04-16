@@ -5,7 +5,8 @@ setup(
     version='0.1.0',
     description='A package for evaluating ethical dilemmas with LLMs',
     author='Nazia Afsan Mowmita',
-    packages=find_packages(include=["LLM_ethics_library-1", "LLM_ethics_library-1.*"]),
+    packages=find_packages(include=["LLM_ethics_library", "LLM_ethics_library.*"]),
+    py_modules=['prompt_wrapper'],
     install_requires=[
     ],
     python_requires='>=3.7',
