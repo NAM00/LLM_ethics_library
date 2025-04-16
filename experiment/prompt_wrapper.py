@@ -254,13 +254,13 @@ class Response:
     wrapped_prompt: PromptWrapper
     decision: DecisionOption
     llm_identifier: LlmName
-    unparsed_messages: list[LlmMessage]
+    unparsed_messages: List[LlmMessage]
     parsed_response: dict
     prompt_tokens: int
     completion_tokens: int
 
     def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: LlmName,
-                 unparsed_messages: list[LlmMessage], parsed_response: dict, prompt_tokens: int,
+                 unparsed_messages: List[LlmMessage], parsed_response: dict, prompt_tokens: int,
                  completion_tokens: int):
         self.wrapped_prompt = wrapped_prompt
         self.decision = decision
@@ -306,7 +306,7 @@ class Response:
         res.update(analysis_fields)
         return res
 
-    def get_messages_by_role(self, role: LlmMessageRole) -> list[LlmMessage]:
+    def get_messages_by_role(self, role: LlmMessageRole) -> List[LlmMessage]:
         return [message for message in self.unparsed_messages if message.role == role]
 
     @property
