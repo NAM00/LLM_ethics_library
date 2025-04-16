@@ -1,9 +1,13 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="your_package",
-    version="0.1.0",
-    packages=find_packages(),  # Automatically find packages in folders with __init__.py
-    install_requires=[],       # Or load from requirements.txt
-    python_requires='>=3.6',
+    name='LLM_ethics_library',
+    version='0.1.0',
+    description='A package for evaluating ethical dilemmas with LLMs',
+    author='Nazia Afsan Mowmita',
+    packages=find_packages(include=["LLM_ethics_library", "LLM_ethics_library.*"]),
+    install_requires=[
+    ],
+    python_requires='>=3.7',
+    include_package_data=True,
 )

@@ -6,8 +6,7 @@ import os
 from .prompt_wrapper import *
 
 
-
-def query(wrapped_prompt: PromptWrapper,  MODEL_NAME) -> Response:
+def query(wrapped_prompt: PromptWrapper, MODEL_NAME) -> Response:
     messages = []
     responses = []
 
@@ -36,10 +35,10 @@ def query(wrapped_prompt: PromptWrapper,  MODEL_NAME) -> Response:
                 kwargs["response_format"] = response_format
 
                 pipeline = transformers.pipeline(
-                        "text-generation",
-                        model=MODEL_NAME,
-                        device_map="cuda"
-                    )
+                    "text-generation",
+                    model=MODEL_NAME,
+                    device_map="cuda"
+                )
                 outputs = pipeline(
                     messages,
                     max_new_tokens=1000,
@@ -48,16 +47,14 @@ def query(wrapped_prompt: PromptWrapper,  MODEL_NAME) -> Response:
                 response = outputs[0]["generated_text"]["content"]
                 print(response)
 
-
-
             if len(response.choices) == 0:
                 raise Exception("No response from " + MODEL_NAME)
             if len(response.choices) > 1:
                 raise Exception("More than one response from " + MODEL_NAME)
             if response.choices[0].message.role != "assistant":
-                raise Exception("Response from "+ MODEL_NAME+" OpenAI API is not from the assistant")
+                raise Exception("Response from " + MODEL_NAME + " OpenAI API is not from the assistant")
             if response.choices[0].message.content == "":
-                raise Exception("Response from "+ MODEL_NAME+" is empty")
+                raise Exception("Response from " + MODEL_NAME + " is empty")
             if response.choices[0].finish_reason != "stop":
                 raise Exception("Response finish_reason is not 'stop'")
 
