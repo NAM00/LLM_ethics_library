@@ -34,6 +34,8 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
             )
             response = outputs[0]["generated_text"][-1]["content"]
             print(response)
+            print("row ------" + str(count))
+            count = count + 1
             responses.append(response)
             with open("./test.jsonl", "a") as file:
                 file.write(json.dumps(response) + "\n")
