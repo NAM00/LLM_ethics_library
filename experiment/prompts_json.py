@@ -4,7 +4,7 @@ from experiment.prompt_wrapper import PromptWrapper, Response, OutputStructure
 from version import VERSION
 
 
-def generate_prompt_json(prompts: list[PromptWrapper], path: str):
+def generate_prompt_json(prompts: List[PromptWrapper], path: str):
     prompt_dicts = [prompt.to_dict() for prompt in prompts]
     with open(path, 'w') as f:
         json.dump(prompt_dicts, f, indent=4)
@@ -14,7 +14,7 @@ def generate_prompt_json(prompts: list[PromptWrapper], path: str):
 
 def load_prompts_from_json(path: str):
     """
-    Load a list of PromptWrapper objects from a JSON file.
+    Load a List of PromptWrapper objects from a JSON file.
     """
     obj = []
 
@@ -40,7 +40,7 @@ def load_prompts_from_json(path: str):
     return obj
 
 
-def generate_response_json(responses: list[Response], path: str, logging: bool = True):
+def generate_response_json(responses: List[Response], path: str, logging: bool = True):
     response_dicts = [response.to_dict() for response in responses]
     with open(path, 'w') as f:
         json.dump(response_dicts, f, indent=4)

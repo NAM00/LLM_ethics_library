@@ -76,14 +76,14 @@ def get_all_output_structure_combinations():
 
                     for permuted_output_components in itertools.permutations(sorted_output_components):
                         yield OutputStructure(
-                            sorted_output_components=list(
+                            sorted_output_components=List(
                                 permuted_output_components),
                             sorted_decision_options=permuted_decision_options,
                             first_unstructred_output=first_unstructred_output
                         )
 
 
-def get_output_structure_description(ordered_output: list[OutputComponentType]):
+def get_output_structure_description(ordered_output: List[OutputComponentType]):
     if ordered_output == [OutputComponentType.DECISION]:
         return "Do not reason in your response. Just provide your decision."
 
@@ -172,7 +172,7 @@ def construct_prompts(dilemma_identifier: str, ethical_framework_identifier: str
                 )
 
 
-def add_id_to_prompts(prompts: list[PromptWrapper]):
+def add_id_to_prompts(prompts: List[PromptWrapper]):
     for i, prompt in enumerate(prompts):
         prompt.add_id(f'{VERSION}_{i}')
     return prompts
