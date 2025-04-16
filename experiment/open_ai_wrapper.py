@@ -1,12 +1,30 @@
 import os
 import json
-import transformers
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import os
-from .prompt_wrapper import *
+
+import openai
+
+from prompt_wrapper import *
 
 
-def query(wrapped_prompt: PromptWrapper, MODEL_NAME) -> Response:
+def test_openai_api(api_key: str):
+    openai.api_key = api_key
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Hello World"}
+            ],
+            max_tokens=5
+        )
+        print("WORKED")
+    except Exception as e:
+        print("An error occurred")
+        raise e
+
+
+def query_openai_api(api_key: str, wrapped_prompt: PromptWrapper, model: LlmName = LlmName.GPT4O) -> Response:
+    openai.api_key = api_key
+
     messages = []
     responses = []
 
@@ -34,27 +52,21 @@ def query(wrapped_prompt: PromptWrapper, MODEL_NAME) -> Response:
                 }
                 kwargs["response_format"] = response_format
 
-                pipeline = transformers.pipeline(
-                    "text-generation",
-                    model=MODEL_NAME,
-                    device_map="cuda"
-                )
-                outputs = pipeline(
-                    messages,
-                    max_new_tokens=1000,
-                    do_sample=False
-                )
-                response = outputs[0]["generated_text"]["content"]
-                print(response)
+            response = openai.chat.completions.create(
+                model=model.value,
+                messages=messages,
+                n=1,
+                **kwargs
+            )
 
             if len(response.choices) == 0:
-                raise Exception("No response from " + MODEL_NAME)
+                raise Exception("No response from OpenAI API")
             if len(response.choices) > 1:
-                raise Exception("More than one response from " + MODEL_NAME)
+                raise Exception("More than one response from OpenAI API")
             if response.choices[0].message.role != "assistant":
-                raise Exception("Response from " + MODEL_NAME + " OpenAI API is not from the assistant")
+                raise Exception("Response from OpenAI API is not from the assistant")
             if response.choices[0].message.content == "":
-                raise Exception("Response from " + MODEL_NAME + " is empty")
+                raise Exception("Response from OpenAI API is empty")
             if response.choices[0].finish_reason != "stop":
                 raise Exception("Response finish_reason is not 'stop'")
 
@@ -74,7 +86,7 @@ def query(wrapped_prompt: PromptWrapper, MODEL_NAME) -> Response:
         return Response(
             wrapped_prompt=wrapped_prompt,
             decision=decision,
-            llm_identifier=MODEL_NAME,
+            llm_identifier=model,
             unparsed_messages=[LlmMessage.from_dict(item) for item in messages],
             parsed_response=parsed_response,
             prompt_tokens=prompt_tokens,
@@ -86,4 +98,5 @@ def query(wrapped_prompt: PromptWrapper, MODEL_NAME) -> Response:
 
 
 if __name__ == '__main__':
-    response = query(MODEL_NAME="meta-llama/Llama-3.2-1B-Instruct")
+    api_key = os.getenv("ETHICS_OPENAI_API_KEY")
+    response = test_openai_api(api_key)

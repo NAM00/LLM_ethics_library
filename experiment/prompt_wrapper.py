@@ -1,6 +1,9 @@
 from enum import Enum
+from multiprocessing.managers import public_methods
 
-from .dilemma_wrapper import DilemmaWrapper, InvertableDilemmaWrapper, get_dilemma
+from sympy import public
+
+from experiment.dilemma_wrapper import DilemmaWrapper, InvertableDilemmaWrapper, get_dilemma
 
 
 class DecisionOption(Enum):
@@ -151,9 +154,14 @@ class PromptWrapper:
         self.output_structure = output_structure
         self.version = version
 
+    def get_prompts(self):
+        return self.prompts[0]
+
     @property
     def dilemma(self) -> DilemmaWrapper:
         return get_dilemma(self.dilemma_identifier)
+
+
 
     def __str__(self):
         res = "--------PromptWrapper--------"
@@ -212,6 +220,11 @@ class PromptWrapper:
         })
         return res
 
+
+
+    @public_methods
+    def prompts(self):
+        return self.get_prompts()
 
 class LlmName(Enum):
     GPT4O = "gpt-4o"

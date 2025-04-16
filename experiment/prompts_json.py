@@ -1,7 +1,7 @@
 import json
 
-from .prompt_wrapper import PromptWrapper, Response
-from .version import VERSION
+from experiment.prompt_wrapper import PromptWrapper, Response, OutputStructure
+from version import VERSION
 
 
 def generate_prompt_json(prompts: list[PromptWrapper], path: str):
@@ -16,15 +16,28 @@ def load_prompts_from_json(path: str):
     """
     Load a list of PromptWrapper objects from a JSON file.
     """
+    obj = []
+
     with open(path, 'r') as f:
         data = json.load(f)
 
-    res = [PromptWrapper.from_dict(item) for item in data]
-    if not res[0].version == VERSION:
-        print("Warning: The version of the loaded prompts does not match the current library version.")
+    for item in data:
+        print(item)
+        res = PromptWrapper(prompts=item["prompts"],
+                            dilemma_identifier=item["dilemma_identifier"],
+                            ethical_framework_identifier=item["ethical_framework_identifier"],
+                            base_prompt_identifier=item["base_prompt_identifier"],
+                            prompt_has_output_structure_description=item["prompt_has_output_structure_description"],
+                            prompt_has_output_structure_json_schema=item["prompt_has_output_structure_json_schema"],
+                            output_structure=OutputStructure.from_dict(
+                                item["output_structure"]),
+                            version=item["version"],
+                            )
+        obj.append(res)
+
 
     # Convert each dictionary back into a PromptWrapper object
-    return res
+    return obj
 
 
 def generate_response_json(responses: list[Response], path: str, logging: bool = True):
