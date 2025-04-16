@@ -29,7 +29,8 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
                 device_map="cuda"
             )
             outputs = pipeline(
-                messages
+                messages,
+                max_new_tokens=1024,
             )
             response = outputs[0]["generated_text"]
             print(response)
