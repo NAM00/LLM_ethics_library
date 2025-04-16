@@ -14,10 +14,10 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
     responses = []
     try:
         safeguard = 5  # We never have more than 5 prompts
-        count = 0
+        count = 252
         prompt_tokens = 0
         completion_tokens = 0
-        for item in wrapped_prompt:
+        for item in wrapped_prompt[251:]:
             prompt = item.get_prompts()
             messages.append({"role": "system", "content": prompt})
             kwargs = {}
@@ -40,7 +40,7 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
             with open("./test_3.1_Llama.jsonl", "a") as file:
                 file.write(json.dumps(response) + "\n")
 
-        with open("responses_3.1_Llama.json", "w", encoding="utf-8") as f:
+        with open("responses_3.1_Llama_from_252.json", "w", encoding="utf-8") as f:
             json.dump(responses, f, indent=2)
     except Exception as e:
         print(f"An error occurred: {e}")
