@@ -40,7 +40,7 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
             with open("./test.jsonl", "a") as file:
                 file.write(json.dumps(response) + "\n")
 
-        with open("responses.json", "w", encoding="utf-8") as f:
+        with open("responses_2.json", "w", encoding="utf-8") as f:
             json.dump(responses, f, indent=2)
     except Exception as e:
         print(f"An error occurred: {e}")
