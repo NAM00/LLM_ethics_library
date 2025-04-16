@@ -1,6 +1,6 @@
 import json
 
-from experiment.prompt_wrapper import PromptWrapper, Response, OutputStructure
+from prompt_wrapper import PromptWrapper, Response, OutputStructure
 from version import VERSION
 from typing import List
 
