@@ -2,6 +2,7 @@ import json
 
 from experiment.prompt_wrapper import PromptWrapper, Response, OutputStructure
 from version import VERSION
+from typing import List
 
 
 def generate_prompt_json(prompts: List[PromptWrapper], path: str):
