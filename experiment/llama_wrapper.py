@@ -32,30 +32,14 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
                 messages,
                 max_new_tokens=1024,
             )
-            response = outputs[0]["generated_text"]
+            response = outputs[0]["generated_text"][-1]["content"]
             print(response)
+            responses.append(response)
             with open("./test.jsonl", "a") as file:
                 file.write(json.dumps(response) + "\n")
 
-
-            prompt_tokens += response.usage.prompt_tokens
-            completion_tokens += response.usage.completion_tokens
-
-        parsed_response = json.loads(responses[-1])
-        if not parsed_response.get("decision"):
-            raise Exception("No decision in response")
-
-        decision = DecisionOption(parsed_response["decision"])
-
-        return Response(
-            wrapped_prompt=wrapped_prompt,
-            decision=decision,
-            llm_identifier=MODEL_NAME,
-            unparsed_messages=[LlmMessage.from_dict(item) for item in messages],
-            parsed_response=parsed_response,
-            prompt_tokens=prompt_tokens,
-            completion_tokens=completion_tokens,
-        )
+        with open("responses.json", "w", encoding="utf-8") as f:
+            json.dump(responses, f, indent=2)
     except Exception as e:
         print(f"An error occurred: {e}")
 
