@@ -3,7 +3,7 @@ import json
 import transformers
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import os
-from .prompt_wrapper import *
+from LLM_ethics_library.prompt_wrapper import *
 
 
 def query(wrapped_prompt: PromptWrapper, MODEL_NAME) -> Response:
