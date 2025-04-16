@@ -86,4 +86,4 @@ def query(wrapped_prompt: PromptWrapper, MODEL_NAME) -> Response:
 
 
 if __name__ == '__main__':
-    response = query(MODEL_NAME="meta-llama/Llama-3.1-8B-Instruct")
+    response = query(MODEL_NAME="meta-llama/Llama-3.2-1B-Instruct")
