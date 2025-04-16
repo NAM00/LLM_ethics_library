@@ -19,11 +19,9 @@ class OutputComponentType(Enum):
 
 
 class OutputStructure:
-    sorted_output_components: list[OutputComponentType]
-    sorted_decision_options: list[DecisionOption]
-    first_unstructred_output: bool
 
-    def __init__(self, sorted_output_components: list[OutputComponentType], sorted_decision_options: list[DecisionOption], first_unstructred_output: bool):
+    def __init__(self, sorted_output_components: list[OutputComponentType],
+                 sorted_decision_options: list[DecisionOption], first_unstructred_output: bool):
         self.sorted_output_components = sorted_output_components
         self.sorted_decision_options = sorted_decision_options
         self.first_unstructred_output = first_unstructred_output
@@ -36,8 +34,8 @@ class OutputStructure:
     @property
     def has_unstructured_decision_text(self) -> bool:
         return (
-            OutputComponentType.DECISION_REASON in self.sorted_decision_options
-            or self.first_unstructred_output
+                OutputComponentType.DECISION_REASON in self.sorted_decision_options
+                or self.first_unstructred_output
         )
 
     @property
@@ -134,15 +132,15 @@ class PromptWrapper:
         self._id = _id
 
     def __init__(
-        self,
-        prompts: list[str],
-        dilemma_identifier: str,
-        ethical_framework_identifier: str,
-        base_prompt_identifier: str,
-        prompt_has_output_structure_description: bool,
-        prompt_has_output_structure_json_schema: bool,
-        output_structure: OutputStructure,
-        version: str,
+            self,
+            prompts: list[str],
+            dilemma_identifier: str,
+            ethical_framework_identifier: str,
+            base_prompt_identifier: str,
+            prompt_has_output_structure_description: bool,
+            prompt_has_output_structure_json_schema: bool,
+            output_structure: OutputStructure,
+            version: str,
     ):
         self._id = None
         self.prompts = prompts
@@ -160,8 +158,6 @@ class PromptWrapper:
     @property
     def dilemma(self) -> DilemmaWrapper:
         return get_dilemma(self.dilemma_identifier)
-
-
 
     def __str__(self):
         res = "--------PromptWrapper--------"
@@ -220,11 +216,10 @@ class PromptWrapper:
         })
         return res
 
-
-
     @public_methods
     def prompts(self):
         return self.get_prompts()
+
 
 class LlmName(Enum):
     GPT4O = "gpt-4o"
@@ -263,7 +258,9 @@ class Response:
     prompt_tokens: int
     completion_tokens: int
 
-    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: LlmName, unparsed_messages: list[LlmMessage], parsed_response: dict, prompt_tokens: int, completion_tokens: int):
+    def __init__(self, wrapped_prompt: PromptWrapper, decision: DecisionOption, llm_identifier: LlmName,
+                 unparsed_messages: list[LlmMessage], parsed_response: dict, prompt_tokens: int,
+                 completion_tokens: int):
         self.wrapped_prompt = wrapped_prompt
         self.decision = decision
         self.llm_identifier = llm_identifier
@@ -319,7 +316,8 @@ class Response:
             return self.decision
 
         assert self.decision in [
-            option for option in DecisionOption], f"Invalid decision value: {self.decision}. \n Check if restarting the jupyter kernel helps"
+            option for option in
+            DecisionOption], f"Invalid decision value: {self.decision}. \n Check if restarting the jupyter kernel helps"
 
         if self.decision == DecisionOption.UNDECIDED:
             return DecisionOption.UNDECIDED
