@@ -7,6 +7,7 @@ from prompt_wrapper import *
 from prompts_json import *
 from prompt_wrapper import PromptWrapper
 
+from typing import List
 
 def query(wrapped_prompt, MODEL_NAME) -> Response:
     messages = []

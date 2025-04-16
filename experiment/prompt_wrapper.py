@@ -1,5 +1,6 @@
 from enum import Enum
 from multiprocessing.managers import public_methods
+from typing import List
 
 from sympy import public
 
