@@ -11,7 +11,6 @@ from prompt_wrapper import PromptWrapper
 def query(wrapped_prompt, MODEL_NAME) -> Response:
     messages = []
     responses = []
-    print(wrapped_prompt[0].get_prompts())
     try:
         safeguard = 5  # We never have more than 5 prompts
         count = 0
