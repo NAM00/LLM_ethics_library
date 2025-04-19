@@ -26,7 +26,8 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
             pipeline = transformers.pipeline(
                 "text-generation",
                 model=MODEL_NAME,
-                device_map="cuda"
+                device_map="cuda",
+                trust_remote_code=True
             )
             outputs = pipeline(
                 messages,
