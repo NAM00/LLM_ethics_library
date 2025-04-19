@@ -14,10 +14,10 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
     responses = []
     try:
         safeguard = 5  # We never have more than 5 prompts
-        count = 0
+        count = 442
         prompt_tokens = 0
         completion_tokens = 0
-        for item in wrapped_prompt:
+        for item in wrapped_prompt[441:]:
             prompt = item.get_prompts()
             messages.append({"role": "system", "content": prompt})
             kwargs = {}
@@ -37,10 +37,10 @@ def query(wrapped_prompt, MODEL_NAME) -> Response:
             print("row ------" + str(count))
             count = count + 1
             responses.append(response)
-            with open("./test_3.1_deepseek_1B.jsonl", "a") as file:
+            with open("./test_Llama-3.1-8B-Instruct.jsonl", "a") as file:
                 file.write(json.dumps(response) + "\n")
 
-        with open("responses_3.1_deepseek_1B.json", "w", encoding="utf-8") as f:
+        with open("responses_Llama-3.1-8B-Instruct.json", "w", encoding="utf-8") as f:
             json.dump(responses, f, indent=2)
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -50,4 +50,4 @@ if __name__ == '__main__':
     file_path = "data/prompts/wrapped_prompts_v1.6.json"
     prompts = load_prompts_from_json(file_path)
 
-    query(wrapped_prompt=prompts, MODEL_NAME="deepseek-ai/Janus-Pro-1B")
+    query(wrapped_prompt=prompts, MODEL_NAME="meta-llama/Llama-3.1-8B-Instruct")
